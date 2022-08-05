@@ -23,4 +23,4 @@ export default function AppRoutes() {
             <Route path='/buy-product' element={<BuyProduct />} />
         </Routes>
     );
-};
+}
