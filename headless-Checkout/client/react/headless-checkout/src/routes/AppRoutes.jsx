@@ -8,19 +8,17 @@ import SavePaymentMethod from '../pages/save-payment-method/SavePaymentMethod';
 import PayWithSavedPaymentMethod from '../pages/pay-with-saved-payment-method/PayWithSavedPaymentMethod';
 import ValidateFields from '../pages/validate-fields/ValidateFields';
 import GetCardInfo from '../pages/get-card-info/GetCardInfo';
-import BuyProduct from '../components/buy-product/BuyProduct';
 
 export default function AppRoutes() {
     return (
         <Routes>
             <Route path='/' element={<HeadlessCheckout />} />
             <Route path='/headless-checkout-options' element={<HeadlessCheckoutOptions />} />
-            <Route path='/make-payment' element={<MakePayment />} />
+            <Route path='/make-payment/*' element={<MakePayment />} />
             <Route path='/save-payment-method' element={<SavePaymentMethod />} />
             <Route path='/pay-with-saved-payment-method' element={<PayWithSavedPaymentMethod />} />
             <Route path='/validate-fields' element={<ValidateFields />} />
             <Route path='/get-card-info' element={<GetCardInfo />} />
-            <Route path='/buy-product' element={<BuyProduct />} />
         </Routes>
     );
 }
