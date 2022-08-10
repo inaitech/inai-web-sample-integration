@@ -27,7 +27,8 @@ export default function PaymentMethodOptions() {
                 body : JSON.stringify({
                     customer: {
                         email: 'test2@gmail.com'
-                    }
+                    }, 
+                    capture_method: 'MANUAL'
                 })
             });
             const order_response_data = await order_response.json();
@@ -39,7 +40,7 @@ export default function PaymentMethodOptions() {
             }
             setOrderId(order_response_data.id);
 
-            // get payment method options // order creation successful
+            // order creation successful // get payment method options
             const new_payment_method_options_url = payment_method_options_url + `?country=IND&saved_payment_method=false&order_id=${order_response_data.id}`;
             const payment_method_options_response = await fetch(new_payment_method_options_url);
             const payment_method_options_response_data = await payment_method_options_response.json();
@@ -119,7 +120,7 @@ export default function PaymentMethodOptions() {
         }
     }
 
-    function handleCheckout() {
+    function saveCard() {
         const paymentMethodOption = selectedPaymentMethod;
         const formattedPaymentDetails = {
             fields: []
@@ -144,12 +145,12 @@ export default function PaymentMethodOptions() {
 
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
-        .then(data => {
-            alert(`message: ${data.message}`, `transaction_id: ${data.transaction_id}`);
+        .then(() => {
+            alert('Congratulations! Your payment method got saved with us.');
             navigate('/headless-checkout-options');
         })
-        .catch(err => {
-            alert(`message: ${err.message}`);
+        .catch(() => {
+            alert('Oops! something went wrong! Your payment method did not get saved.');
         })
     }
 
@@ -206,7 +207,7 @@ export default function PaymentMethodOptions() {
                             </div>
                         ))
                     }
-                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handleCheckout}>CHECKOUT</div>
+                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={saveCard}>SAVE CARD</div>
                 </div>
             ) : null}
         </div>

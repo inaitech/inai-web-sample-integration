@@ -1,7 +1,13 @@
+import { Routes, Route } from 'react-router-dom';
+
+// pages
+import PaymentMethodOptions from './PaymentMethodOptions';
 export default function SavePaymentMethod() {
     return (
         <div>
-            save payment method page
+            <Routes>
+                <Route path='/payment-method-options' element={<PaymentMethodOptions />} />
+            </Routes>
         </div>
     );
 }
