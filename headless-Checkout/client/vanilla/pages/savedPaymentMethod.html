@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+      <script
+  src="https://assets.inai.io/checkout/v1/inai.js"
+  type="text/javascript">
+</script>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      label {
+        display: block;
+        padding: 4px;
+      }
+      label input {
+        display: block;
+        margin: 6px 0;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #c2c2c2;
+        width: 320px;
+      }
+      label span {
+        font-size: 12px;
+        font-weight: 600;
+        color: #123456
+      }
+      input[type=checkbox] {
+        display: inline-block;
+        width: auto;
+        margin: 0 6px;
+      }
+      label span.required:after {
+        content: " *";
+        color: red;
+      }
+      .payment-method-button {
+        background-color: white;
+        border: 1px solid #e2e2e2;
+        border-radius: 5px;
+        padding: 12px;
+        margin: 12px 0;
+        min-width: 320px;
+        font-size: 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      * {
+  box-sizing: border-box;}
+
+      .payment-method-button.selected {
+        border: 2px solid #7154d4;
+      }
+      .payment-method-button img {
+        height: 21px;
+      }
+      .toggle-transition {
+        transition: height 1000ms ease-out;
+        height: 0px;
+        overflow: hidden;
+      }
+      #payment-methods-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 32px;
+        width: 400px;
+        margin: 24px auto;
+        margin-bottom: 80px;
+        border-radius: 10px;
+        -webkit-box-shadow: 0px 0px 10px -5px rgba(74, 74, 74, 1);
+        -moz-box-shadow: 0px 0px 10px -5px rgba(74, 74, 74, 1);
+        box-shadow: 0px 0px 10px -5px rgba(74, 74, 74, 1);
+      }
+        #checkout-cta {
+        background-color: white;
+        color: #7154d4;
+        border: 1px solid #a2a2a2;
+        min-width: 320px;
+        padding: 8px;
+        margin: 12px 0;
+        font-weight: 600;
+      }
+      #checkout-button-container {
+        position: fixed;
+        bottom: 0;
+        background-color: #7154d4;
+        width: 100%;
+        text-align: right;
+        padding: 0 12px;
+      }
+      #checkout-button-container #checkout-cta {
+        border: none;
+        border-radius: 5px;
+        border-radius: 5px;
+        margin: 12px 24px;
+        cursor: pointer;
+      }
+</style>
+</head>
+<body>
+    <h1>saved payment methods</h1>
+    <div id="payment-methods-container"></div>
+<div id="checkout-button-container"></div>
+</body>
+</html>
+<script type="text/javascript" src="./savedPaymentMethod.js"></script>
