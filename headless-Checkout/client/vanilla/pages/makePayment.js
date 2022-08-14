@@ -1,9 +1,24 @@
+//local-server url and token
+//replace this url with your local-server url
+const server = "http://localhost:8080";
+//replace token with client id
+const token = "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS";
+const country = "USA";
 
 const payment_container = document.getElementById("payment-methods-container");
 const checkout_container = document.getElementById("checkout-button-container");
 
+// utility to create a HTML DOM element
+const createElement = (tag, id) => {
+    const elem = document.createElement(tag);
+    if (!!id) {
+        elem.id = id;
+    }
+    return elem;
+};
+
 function payment() {
-    const url = "http://localhost:8080/checkout";
+    const url = `${server}/checkout`;
     const options = {
         method: "POST",
         headers: {
@@ -15,28 +30,17 @@ function payment() {
         .then((response) => response.json())
         .then((data) => {
             let order_id = (data.id);
-            fetch(`http://localhost:8080/payment-method-options?order_id=${order_id}&country=USA`)
+            fetch(`${server}/payment-method-options?order_id=${order_id}&country=${country}`)
                 .then((response) => response.json())
                 .then((data) => {
                     payment_container.classList.remove('hide');
                     checkout_container.classList.remove('hide');
                     let paymentOptions = (data.payment_method_options);
-                    console.log(paymentOptions);
+
                     // holds state of currently chosen payment
-                    // method option
                     let selectedPaymentMethodOption = null;
 
-                    // utility to create a HTML DOM element
-                    const createElement = (tag, id) => {
-                        const elem = document.createElement(tag);
-                        if (!!id) {
-                            elem.id = id;
-                        }
-                        return elem;
-                    };
-
-                    // toggle method that toggles the payment method fields when 
-                    // a payment method option button is clicked
+                    // toggle method that toggles the payment method fields 
                     const togglePaymentMethodFormFields = (fieldsContainer) => {
                         fieldsContainer.style.height = fieldsContainer.style.height === 'auto' ? '0px' : 'auto';
                         fieldsContainer.style.overflow = fieldsContainer.style.overflow === 'auto' ? 'hidden' : 'auto';
@@ -61,9 +65,6 @@ function payment() {
                         const cardNumber = event.target.value;
                         if (fieldName !== 'number') {
                             return
-                        }
-                        if (fieldName === "expiry") {
-                            event.target.value = "5555"
                         }
 
                         // method to get card details
@@ -141,7 +142,7 @@ function payment() {
                             fieldInput.classList.add(`${rail}_${fieldName}`);
                             fieldInput.oninput = (event) => {
                                 const input_box = document.getElementsByClassName(`${rail}_${fieldName}`)[0];
-                                if (!(validateField(event.target.value, validations))) {
+                                if (!validateField(event.target.value, validations)) {
                                     input_box.classList.add('invalid');
                                     input_box.classList.remove('valid');
                                 }
@@ -163,8 +164,6 @@ function payment() {
                             fieldInput.classList.add('payment-input');
                             fieldInput.setAttribute('data-name', fieldName);
 
-                            // if field is a required field,
-                            // adds styles for adding asterisk
                             if (isRequired) {
                                 labelText.classList.add('required')
                             }
@@ -183,7 +182,6 @@ function payment() {
                         railContainer.appendChild(fieldsContainer);
                         document.getElementById('payment-methods-container').appendChild(railContainer);
                     })
-
                     // renders payment method options and the associated fields
 
                     const checkoutBtn = createElement('button', 'checkout-cta');
@@ -193,7 +191,7 @@ function payment() {
                     // on click listener for checkout button
                     checkoutBtn.onclick = () => {
                         let inaiInstance = window.inai.create({
-                            token: "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS",
+                            token: token,
                             orderId: order_id,
                             countryCode: "USA",
                         });
@@ -222,10 +220,7 @@ function payment() {
                             });
                     }
                 });
-
         });
-
-
 }
 payment();
 
