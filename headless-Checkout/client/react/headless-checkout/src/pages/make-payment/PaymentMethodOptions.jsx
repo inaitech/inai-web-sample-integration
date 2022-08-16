@@ -26,7 +26,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'test@gmail.com'
+                        external_id: process.env.REACT_APP_EXTERNAL_ID // merchant's representation of customer
                     }
                 })
             });
@@ -145,11 +145,11 @@ export default function PaymentMethodOptions() {
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
         .then(data => {
-            alert(`message: ${data.message}`, `transaction_id: ${data.transaction_id}`);
+            alert(JSON.stringify(data));
             navigate('/headless-checkout-options');
         })
         .catch(err => {
-            alert(`message: ${err.message}`);
+            alert(JSON.stringify(err));
         })
     }
 

@@ -26,7 +26,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        id: process.env.REACT_APP_CUSTOMER_ID // customer id saved in inai db
+                        external_id: process.env.REACT_APP_EXTERNAL_ID
                     }, 
                     capture_method: 'MANUAL' // required to only save card and not charge customer
                 })
@@ -35,7 +35,7 @@ export default function PaymentMethodOptions() {
             if (order_response.status !== 201) {
                 // order creation unsuccessful!
                 setLoading(false);
-                setError(order_response_data.message);
+                setError(JSON.stringify(order_response_data));
                 return;
             }
             setOrderId(order_response_data.id);
@@ -46,7 +46,7 @@ export default function PaymentMethodOptions() {
             const payment_method_options_response_data = await payment_method_options_response.json();
             if (payment_method_options_response.status !== 200) {
                 setLoading(false);
-                setError(payment_method_options_response_data.message || payment_method_options_response_data.description);
+                setError(JSON.stringify(payment_method_options_response_data));
                 return;
             }
 
@@ -54,7 +54,7 @@ export default function PaymentMethodOptions() {
             setLoading(false);
             setPaymentMethodOptions([...payment_method_options_response_data.payment_method_options]);
         } catch(err) {
-            setError(err.message);
+            setError(JSON.stringify(err));
         }
     }
 
@@ -144,12 +144,12 @@ export default function PaymentMethodOptions() {
 
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
-        .then(() => {
-            alert('Congratulations! Your payment method got saved with us.');
+        .then((data) => {
+            alert(JSON.stringify(data));
             navigate('/headless-checkout-options');
         })
         .catch((err) => {
-            alert('Oops! something went wrong! Your payment method did not get saved.');
+            alert(JSON.stringify(err));
         })
     }
 

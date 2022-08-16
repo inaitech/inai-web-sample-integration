@@ -15,7 +15,6 @@ export default function PaymentMethodOptions() {
     const [paymentDetails, setPaymentDetails] = useState({});
     const [orderId, setOrderId] = useState('');
     const [customerSavedPaymentMethods, setCustomerSavedPaymentMethods] = useState([]);
-    console.log('customerSavedPaymentMethods', customerSavedPaymentMethods);
 
     const getPaymentMethods = async () => {
         try{
@@ -28,7 +27,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        id: process.env.REACT_APP_CUSTOMER_ID // id of a logged in customer in inai db
+                        external_id: process.env.REACT_APP_EXTERNAL_ID
                     }
                 })
             });
@@ -60,7 +59,7 @@ export default function PaymentMethodOptions() {
             const customer_saved_payment_methods_res_data = await customer_saved_payment_methods_res.json();
             setCustomerSavedPaymentMethods(customer_saved_payment_methods_res_data.payment_methods);
         } catch(err) {
-            setError(err.message);
+            setError(JSON.stringify(err));
         }
     }
 
@@ -130,7 +129,7 @@ export default function PaymentMethodOptions() {
         const paymentMethodOption = selectedPaymentMethod || 'card';
         const formattedPaymentDetails = {
             fields: [],
-            paymentMethodId: customerSavedPaymentMethods[0].id
+            paymentMethodId: customerSavedPaymentMethods[0]?.id
         };
         let current_index = 0;
         for(let key in paymentDetails){
@@ -154,11 +153,11 @@ export default function PaymentMethodOptions() {
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
         .then(data => {
-            alert(`message: ${data.message}`, `transaction_id: ${data.transaction_id}`);
+            alert(JSON.stringify(data));
             navigate('/headless-checkout-options');
         })
         .catch(err => {
-            alert(`message: ${err.message}`);
+            alert(JSON.stringify(err));
         })
     }
 

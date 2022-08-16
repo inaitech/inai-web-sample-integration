@@ -26,7 +26,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'testByDhirendra@gmail.com'
+                        external_id: process.env.REACT_APP_EXTERNAL_ID
                     }
                 })
             });
@@ -205,7 +205,7 @@ export default function PaymentMethodOptions() {
                             </div>
                         ))
                     }
-                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handlePaymentDetailsValidation}>VALIDATE PAYMENT DETAILS</div>
+                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handlePaymentDetailsValidation}>VALIDATE FIELDS</div>
                 </div>
             ) : null}
         </div>

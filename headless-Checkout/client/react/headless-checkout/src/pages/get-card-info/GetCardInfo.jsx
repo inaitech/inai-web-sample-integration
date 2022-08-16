@@ -21,7 +21,7 @@ export default function GetCardInfo() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'test@gmail.com'
+                        external_id: process.env.REACT_APP_EXTERNAL_ID
                     }
                 })
             });
