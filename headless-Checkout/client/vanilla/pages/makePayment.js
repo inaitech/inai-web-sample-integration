@@ -32,10 +32,10 @@ function payment() {
             let order_id = (data.id);
             fetch(`${server}/payment-method-options?order_id=${order_id}&country=${country}`)
                 .then((response) => response.json())
-                .then((data) => {
+                .then((payment_data) => {
                     payment_container.classList.remove('hide');
                     checkout_container.classList.remove('hide');
-                    let paymentOptions = (data.payment_method_options);
+                    let paymentOptions = (payment_data.payment_method_options);
 
                     // holds state of currently chosen payment
                     let selectedPaymentMethodOption = null;
@@ -127,8 +127,7 @@ function payment() {
                             togglePaymentMethodFormFields(fieldsContainer);
                         }
 
-                        // adds payment method option related
-                        // form fields to the DOM
+                        // adds payment method option related form fields to the DOM
                         fields.forEach(field => {
                             const fieldName = field.name;
                             const validations = field.validations;
@@ -182,7 +181,6 @@ function payment() {
                         railContainer.appendChild(fieldsContainer);
                         document.getElementById('payment-methods-container').appendChild(railContainer);
                     })
-                    // renders payment method options and the associated fields
 
                     const checkoutBtn = createElement('button', 'checkout-cta');
                     checkoutBtn.innerText = 'Checkout';
@@ -209,7 +207,6 @@ function payment() {
                         const paymentDetails = {
                             fields: fieldsArray
                         }
-
                         // method to invoke payment with a payment method option
                         // value and the associated payment field input details
                         inaiInstance.makePayment(selectedPaymentMethodOption, paymentDetails)
