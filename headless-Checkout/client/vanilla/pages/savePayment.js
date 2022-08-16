@@ -1,5 +1,12 @@
+//local-server url and token
+//replace this url with your local-server url
+const server = "http://localhost:8080";
+//replace token with client id
+const token = "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS";
+const country = "USA";
+
 function saveApayment() {
-  const url = "http://localhost:8080/create";
+  const url = `${server}/create`;
   const options = {
     method: "POST",
   };
@@ -7,16 +14,12 @@ function saveApayment() {
     .then((response) => response.json())
     .then((data) => {
       let order_id = (data.id);
-      console.log(order_id)
-      fetch(`http://localhost:8080/payment-method-options?order_id=${order_id}&country=USA`)
+      fetch(`${server}/payment-method-options?order_id=${order_id}&country=${country}`)
         .then((response) => response.json())
-        .then((data) => {
-          let paymentOptions = (data.payment_method_options);
-          console.log(paymentOptions);
+        .then((options_data) => {
+          let paymentOptions = (options_data.payment_method_options);
           // holds state of currently chosen payment
-          // method option
           let selectedPaymentMethodOption = null;
-
           // utility to create a HTML DOM element
           const createElement = (tag, id) => {
             const elem = document.createElement(tag);
@@ -26,8 +29,7 @@ function saveApayment() {
             return elem;
           };
 
-          // toggle method that toggles the payment method fields when 
-          // a payment method option button is clicked
+          // toggle method that toggles the payment method fields 
           const togglePaymentMethodFormFields = (fieldsContainer) => {
             fieldsContainer.style.height = fieldsContainer.style.height === 'auto' ? '0px' : 'auto';
             fieldsContainer.style.overflow = fieldsContainer.style.overflow === 'auto' ? 'hidden' : 'auto';
@@ -45,7 +47,6 @@ function saveApayment() {
               selectedFieldContainer.style.overflow = 'hidden';
             }
           }
-
           // input field on change listener to get card
           // info based on card number
           const inputChangeListener = (fieldName, event) => {
@@ -178,9 +179,9 @@ function saveApayment() {
           // on click listener for checkout button
           checkoutBtn.onclick = () => {
             let inaiInstance = window.inai.create({
-              token: "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS",
+              token: token,
               orderId: order_id,
-              countryCode: "USA",
+              countryCode: country,
             });
             const fieldsArray = []
             const paymentMethodFieldsContainer = document.querySelectorAll(`[data-rail-fields=${selectedPaymentMethodOption}]`)[0];
@@ -190,10 +191,7 @@ function saveApayment() {
                 name: paymentInput.getAttribute("data-name"),
                 value: paymentInput.value
               }
-
               fieldsArray.push(formInputDetails);
-
-
             }
             const save_card = {
               name: 'save_card',
@@ -203,8 +201,6 @@ function saveApayment() {
             const paymentDetails = {
               fields: fieldsArray
             }
-            console.log(fieldsArray);
-
             // method to invoke payment with a payment method option
             // value and the associated payment field input details
             inaiInstance.makePayment(selectedPaymentMethodOption, paymentDetails)
