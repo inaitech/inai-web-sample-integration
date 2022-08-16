@@ -5,42 +5,38 @@ This repository demonstrates how to integrate Inai’s web headless checkout sdk
 
 ## Features
 ### Headless Checkout
-- Make a payment with variety of payment method options
-    - Folder : Headless Checkout/Payment Options/PaymentOptionsViewController.swift
+- Make a payment with variety of payment method options & also option of saving payment method as you pay
+    - Folder : inai-web-sample-integration\headless-Checkout\client\react\headless-checkout\src\pages\make-payment
 - Save a payment method
-    - File : Headless Checkout/Save Payment Method/SavePaymentOptionsViewController.swift
-- Save a payment method as you pay
-    - File : Headless Checkout/Make Payment With Saved Method/SavedPaymentOptionsViewController.swift
+    - Folder : inai-web-sample-integration\headless-Checkout\client\react\headless-checkout\src\pages\save-payment-method
 - Pay with a saved payment method
-    - File : Headless Checkout/Validate Fields/ValidateFieldsOptionsViewController.swift
-- Pay with Apple Pay (iOS) - [Setup Instructions](https://docs.inai.io/docs/apple-pay-with-inai-headless-checkout-ios)
-- File : Headless Checkout/Apple Pay/ApplePayViewController.swift
-
+    - Folder : inai-web-sample-integration\headless-Checkout\client\react\headless-checkout\src\pages\pay-with-saved-payment-method
+- Validate payment method details or fields
+    - Folder : inai-web-sample-integration\headless-Checkout\client\react\headless-checkout\src\pages\validate-fields
+- Get card information
+    - Folder : inai-web-sample-integration\headless-Checkout\client\react\headless-checkout\src\pages\get-card-info
 ## Prerequisites
-- To begin, you will require the client username and client password values. Instructions to get this can be found [here](https://docs.inai.io/docs/getting-started)
+- To begin, you will require the inai merchant dashboard credentials, client username and client password values. Instructions to get these can be found [here](https://docs.inai.io/docs/getting-started)
 - Make sure the following steps are completed in the merchant dashboard,
   - [Adding a Provider](https://docs.inai.io/docs/adding-a-payment-processor)
   - [Adding Payment Methods](https://docs.inai.io/docs/adding-a-payment-method)
   - [Customizing Checkout](https://docs.inai.io/docs/customizing-your-checkout)
 
 ### Minimum Requirements
-iOS 9, Swift 5.x
+NodeJS, npm & yarn
 
 ## Setup
 To setup the inai sample app for <platform>, follow the steps below,
-1. `git clone https://github.com/inaitech/inai-ios-sample-integration`
-2. Navigate to  ./config.plist fileupdate the following values :
-   - Client Username
-   - Client Password
-   - Country
-   - Amount      // for order creation
-   - Currency    // for order creation
-3. Run command `pod install` at the root level of the project to install the CocoaPods dependencies.
-4. Open the workspace file `inai-ios-sample-integration.xcworkspace`, build and run the project.
+1. `git clone https://github.com/inaitech/inai-web-sample-integration.git`
+2. Navigate to `inai-web-sample-integration\headless-Checkout\client\react\headless-checkout` and create a .env file with the following variables and update its values :
+   - REACT_APP_CLIENT_USERNAME
+   - REACT_APP_CUSTOMER_ID
+3. cd `inai-web-sample-integration\headless-Checkout\server\node` and update the .env file variables run the server by running commands `yarn start`.
+4. cd `inai-web-sample-integration\headless-Checkout\client\react\headless-checkout` and run commands `yarn install` and then `yarn start`.
 
 ## FAQs
 <TBA>
 
 ## Support
-Inai ios sdk reference docs available [here](https://docs.inai.io/docs/ios-native-sdk).
+Inai web sdk reference docs available [here](https://docs.inai.io/docs/headless-checkout).
 If you found a bug or want to suggest a new [feature/use case/sample], please contact **[customer support](mailto:support@inai.io)**.
