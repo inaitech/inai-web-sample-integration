@@ -28,10 +28,10 @@ NodeJS, npm & yarn
 ## Setup
 To setup the inai sample app for <platform>, follow the steps below,
 1. `git clone https://github.com/inaitech/inai-web-sample-integration.git`
-2. Navigate to `inai-web-sample-integration\headless-Checkout\client\react\headless-checkout` and create a .env file with the following variables and update its values :
-   - REACT_APP_CLIENT_USERNAME
-   - REACT_APP_CUSTOMER_ID
-3. cd `inai-web-sample-integration\headless-Checkout\server\node` and update the .env file variables run the server by running commands `yarn start`.
+2. cd `inai-web-sample-integration\headless-Checkout\server\node` and update the .env file variables run the server by running commands `yarn start`.
+3. Navigate to `inai-web-sample-integration\headless-Checkout\client\react\headless-checkout` and create a .env file with the following variables and update its values :
+   - REACT_APP_CLIENT_USERNAME   // inai merchant's credential username
+   - REACT_APP_EXTERNAL_ID   // merchant's representation of customer
 4. cd `inai-web-sample-integration\headless-Checkout\client\react\headless-checkout` and run commands `yarn install` and then `yarn start`.
 
 ## FAQs
