@@ -1,8 +1,14 @@
+//local-server url and token
+//replace this url with your local-server url
+const server = "http://localhost:8080";
+//replace token with client id
+const token = "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS";
+const country = "USA";
+
 function DisplaysavedPaymentMethods() {
-  fetch("http://localhost:8080/saved")
+  fetch(`${server}/saved`)
     .then((response) => response.json())
     .then((data) => {
-      console.log(data.payment_methods)
       let savedMethods = (data.payment_methods)
       savedMethods.forEach(option => {
         let main_div = document.createElement("div");
@@ -28,8 +34,7 @@ function DisplaysavedPaymentMethods() {
         }
       })
       function savedPayment(paymentId) {
-        console.log(paymentId)
-        const url = "http://localhost:8080/checkout";
+        const url = `${server}/checkout`;
         const options = {
           method: "POST",
           headers: {
@@ -39,19 +44,14 @@ function DisplaysavedPaymentMethods() {
         };
         fetch(url, options)
           .then((response) => response.json())
-          .then((data) => {
-            let order_id = (data.id);
-            console.log(order_id)
-            fetch(`http://localhost:8080/saved_payment-method-options?country=USA&saved_payment_method=true&order_id=${order_id}`)
+          .then((res_data) => {
+            let order_id = (res_data.id);
+            fetch(`${server}/saved_payment-method-options?country=${country}&saved_payment_method=true&order_id=${order_id}`)
               .then((response) => response.json())
-              .then((data) => {
-                console.log(data)
-                let paymentOptions = (data.payment_method_options);
-                console.log(paymentOptions);
+              .then((pay_data) => {
+                let paymentOptions = (pay_data.payment_method_options);
                 // holds state of currently chosen payment
-                // method option
                 let selectedPaymentMethodOption = null;
-
                 // utility to create a HTML DOM element
                 const createElement = (tag, id) => {
                   const elem = document.createElement(tag);
@@ -60,14 +60,12 @@ function DisplaysavedPaymentMethods() {
                   }
                   return elem;
                 };
-
                 // toggle method that toggles the payment method fields when 
                 // a payment method option button is clicked
                 const togglePaymentMethodFormFields = (fieldsContainer) => {
                   fieldsContainer.style.height = fieldsContainer.style.height === 'auto' ? '0px' : 'auto';
                   fieldsContainer.style.overflow = fieldsContainer.style.overflow === 'auto' ? 'hidden' : 'auto';
                 }
-
                 // resets previously chosen payment method's selection state
                 const resetPaymentMethodSelection = () => {
                   const selectedPaymentMethods = document.getElementsByClassName('selected');
@@ -80,7 +78,6 @@ function DisplaysavedPaymentMethods() {
                     selectedFieldContainer.style.overflow = 'hidden';
                   }
                 }
-
                 // input field on change listener to get card
                 // info based on card number
                 const inputChangeListener = (fieldName, event) => {
@@ -88,7 +85,6 @@ function DisplaysavedPaymentMethods() {
                   if (fieldName !== 'number') {
                     return
                   }
-
                   // method to get card details
                   inaiInstance.getCardInfo(cardNumber)
                     .then(cardDetails => {
@@ -98,7 +94,6 @@ function DisplaysavedPaymentMethods() {
                       console.error(error);
                     })
                 }
-
                 paymentOptions.forEach(option => {
                   const rail = option.rail_code;
                   const fields = option.form_fields;
@@ -109,7 +104,6 @@ function DisplaysavedPaymentMethods() {
                   logoElem.src = `../assets/images/${rail}.svg`;
                   railButton.appendChild(logoElem)
                   railContainer.appendChild(railButton);
-
                   const fieldsContainer = createElement('div', `${rail}-fields-container`);
                   fieldsContainer.setAttribute('data-rail-fields', rail)
                   fieldsContainer.classList.add('toggle-transition')
@@ -119,20 +113,16 @@ function DisplaysavedPaymentMethods() {
                     railButton.classList.add('selected');
                     togglePaymentMethodFormFields(fieldsContainer);
                   }
-
-                  // adds payment method option related
-                  // form fields to the DOM
+                  // adds payment method options
                   fields.forEach(field => {
                     const fieldName = field.name;
                     const fieldType = field.field_type;
                     const isRequired = field.required;
-
                     const labelField = createElement('label', fieldName);
                     const labelText = createElement('span');
                     labelText.innerText = field.label;
                     const fieldInput = createElement('input', fieldName);
                     fieldInput.oninput = (event) => {
-                      // console.log(event.target.value)
                       if (fieldName === "expiry") {
                         if (String(event.target.value).length === 2) {
                           event.target.value += "/"
@@ -167,8 +157,6 @@ function DisplaysavedPaymentMethods() {
                   railContainer.appendChild(fieldsContainer);
                   document.getElementById('payment-methods-container').appendChild(railContainer);
                 })
-                console.log(paymentId)
-
                 // renders payment method options and the associated fields
 
                 const checkoutBtn = createElement('button', 'checkout-cta');
@@ -178,11 +166,10 @@ function DisplaysavedPaymentMethods() {
                 // on click listener for checkout button
                 checkoutBtn.onclick = () => {
                   let inaiInstance = window.inai.create({
-                    token: "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS",
+                    token: token,
                     orderId: order_id,
-                    countryCode: "USA",
+                    countryCode: country,
                   });
-
                   const fieldsArray = []
                   const paymentMethodFieldsContainer = document.querySelectorAll(`[data-rail-fields=${selectedPaymentMethodOption}]`)[0];
                   const paymentInputs = paymentMethodFieldsContainer.getElementsByClassName('payment-input');
@@ -197,9 +184,6 @@ function DisplaysavedPaymentMethods() {
                     fields: fieldsArray,
                     "paymentMethodId": paymentId
                   }
-
-                  console.log(paymentDetails)
-
                   // method to invoke payment with a payment method option
                   // value and the associated payment field input details
                   inaiInstance.makePayment(selectedPaymentMethodOption, paymentDetails)
