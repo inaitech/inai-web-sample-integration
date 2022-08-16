@@ -36,7 +36,7 @@ export default function PaymentMethodOptions() {
             setLoading(false);
             if (order_response.status !== 201) {
                 // order creation unsuccessful!
-                setError(`Error: ${order_response_data.detail}`);
+                setError(JSON.stringify(order_response_data));
                 return;
             }
             setOrderId(order_response_data.id);
@@ -47,7 +47,7 @@ export default function PaymentMethodOptions() {
             const payment_method_options_response_data = await payment_method_options_response.json();
             setLoading(false);
             if (payment_method_options_response.status !== 200) {
-                setError(`Error: ${payment_method_options_response_data.description}`);
+                setError(JSON.stringify(payment_method_options_response_data));
                 return;
             }
 
