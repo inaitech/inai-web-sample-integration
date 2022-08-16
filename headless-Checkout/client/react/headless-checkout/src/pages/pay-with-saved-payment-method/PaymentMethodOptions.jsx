@@ -14,6 +14,8 @@ export default function PaymentMethodOptions() {
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     const [paymentDetails, setPaymentDetails] = useState({});
     const [orderId, setOrderId] = useState('');
+    const [customerSavedPaymentMethods, setCustomerSavedPaymentMethods] = useState([]);
+    console.log('customerSavedPaymentMethods', customerSavedPaymentMethods);
 
     const getPaymentMethods = async () => {
         try{
@@ -26,32 +28,37 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'test@gmail.com'
+                        id: process.env.REACT_APP_CUSTOMER_ID // id of a logged in customer in inai db
                     }
                 })
             });
             const order_response_data = await order_response.json();
+            setLoading(false);
             if (order_response.status !== 201) {
                 // order creation unsuccessful!
-                setLoading(false);
-                setError(order_response_data.message);
+                setError(`Error: ${order_response_data.detail}`);
                 return;
             }
             setOrderId(order_response_data.id);
 
-            // get payment method options // order creation successful
-            const new_payment_method_options_url = payment_method_options_url + `?country=IND&saved_payment_method=false&order_id=${order_response_data.id}`;
+            // order creation successful // get payment method options with saved_payment_method set to true
+            const new_payment_method_options_url = payment_method_options_url + `?country=IND&saved_payment_method=true&order_id=${order_response_data.id}`;
             const payment_method_options_response = await fetch(new_payment_method_options_url);
             const payment_method_options_response_data = await payment_method_options_response.json();
+            setLoading(false);
             if (payment_method_options_response.status !== 200) {
-                setLoading(false);
-                setError(payment_method_options_response_data);
+                setError(`Error: ${payment_method_options_response_data.description}`);
                 return;
             }
 
             // now render payment method options
-            setLoading(false);
             setPaymentMethodOptions([...payment_method_options_response_data.payment_method_options]);
+
+            // now get customer's saved payment methods 
+            const customer_saved_payment_methods_url = `http://localhost:5009/v1/customers/${order_response_data.customer_id}/payment-methods`;
+            const customer_saved_payment_methods_res = await fetch(customer_saved_payment_methods_url);
+            const customer_saved_payment_methods_res_data = await customer_saved_payment_methods_res.json();
+            setCustomerSavedPaymentMethods(customer_saved_payment_methods_res_data.payment_methods);
         } catch(err) {
             setError(err.message);
         }
@@ -120,9 +127,10 @@ export default function PaymentMethodOptions() {
     }
 
     function handleCheckout() {
-        const paymentMethodOption = selectedPaymentMethod;
+        const paymentMethodOption = selectedPaymentMethod || 'card';
         const formattedPaymentDetails = {
-            fields: []
+            fields: [],
+            paymentMethodId: customerSavedPaymentMethods[0].id
         };
         let current_index = 0;
         for(let key in paymentDetails){
@@ -132,6 +140,7 @@ export default function PaymentMethodOptions() {
             }
             current_index++;
         }
+
         
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
@@ -179,7 +188,7 @@ export default function PaymentMethodOptions() {
                                         setSelectedPaymentMethod(option.rail_code);
                                         // create new payment details as per payment method fields
                                         const newPaymentDetails = createInitialPaymentDetails(option.form_fields);
-                                        setPaymentDetails({...newPaymentDetails}); // update as per newly selected payment method
+                                        setPaymentDetails({...newPaymentDetails}); // updates as per newly selected payment method
                                     }
                                 }} >
                                     {option.rail_code}

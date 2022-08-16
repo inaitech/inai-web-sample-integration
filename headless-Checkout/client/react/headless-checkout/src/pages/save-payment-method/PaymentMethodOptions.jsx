@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaymentMethodOptions() {
-    const create_order_url = 'http://localhost:5009/v1/order';
+    const create_order_url = 'http://localhost:5009/v1/orders';
     let payment_method_options_url = 'http://localhost:5009/v1/payment-method-options';
 
     const navigate = useNavigate();
@@ -26,9 +26,9 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'test2@gmail.com'
+                        id: process.env.REACT_APP_CUSTOMER_ID // customer id saved in inai db
                     }, 
-                    capture_method: 'MANUAL'
+                    capture_method: 'MANUAL' // required to only save card and not charge customer
                 })
             });
             const order_response_data = await order_response.json();
@@ -46,7 +46,7 @@ export default function PaymentMethodOptions() {
             const payment_method_options_response_data = await payment_method_options_response.json();
             if (payment_method_options_response.status !== 200) {
                 setLoading(false);
-                setError(payment_method_options_response_data);
+                setError(payment_method_options_response_data.message || payment_method_options_response_data.description);
                 return;
             }
 
@@ -133,7 +133,6 @@ export default function PaymentMethodOptions() {
             }
             current_index++;
         }
-        
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
             token: process.env.REACT_APP_CLIENT_USERNAME,
@@ -149,7 +148,7 @@ export default function PaymentMethodOptions() {
             alert('Congratulations! Your payment method got saved with us.');
             navigate('/headless-checkout-options');
         })
-        .catch(() => {
+        .catch((err) => {
             alert('Oops! something went wrong! Your payment method did not get saved.');
         })
     }
@@ -203,6 +202,9 @@ export default function PaymentMethodOptions() {
                                             </div>
                                         )}
                                     </div>
+                                ) : null}
+                                {((selectedPaymentMethod === option.rail_code) && !option.form_fields.length) ? (
+                                    <div className="text-align-center my-15">No fields to display!</div>
                                 ) : null}
                             </div>
                         ))

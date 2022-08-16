@@ -3,20 +3,18 @@ import Routes from  './routes/AppRoutes';
 import React, { useEffect } from 'react';
 
 function App() {
+  const inaiScript = 'https://assets.inai.io/checkout/v1/inai.js';
   useEffect(() => {
-    // https://backend-dev.inai-dev.com/checkout/v1/inai.js
-    let shouldAppendScript = true;
-    if (document.body.lastElementChild.nodeName === 'SCRIPT') {
-      shouldAppendScript = document.body.lastElementChild.src !== "https://assets.inai-dev.com/checkout/v1/inai.js";
-    }
-    if (shouldAppendScript) {
+    let scripts = document.getElementsByTagName('script');
+    scripts = [...scripts];
+    let inai_script_present_in_app = scripts.find(ele => ele.src === inaiScript);
+    if (!inai_script_present_in_app) {
       const script_element = document.createElement('script');
-      script_element.src = "https://assets.inai-dev.com/checkout/v1/inai.js";
+      script_element.src = inaiScript;
       script_element.type = "text/javascript";
       document.body.append(script_element);
     }
-  }, []);
-  
+  }, [])
   return (
     <div className="App">
       <Routes />
