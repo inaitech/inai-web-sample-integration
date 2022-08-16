@@ -1,9 +1,14 @@
-
+//local-server url and token
+//replace this url with your local-server url
+const server = "http://localhost:8080";
+//replace token with client id
+const token = "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS";
+const country = "USA";
 
 function payment() {
   const payment_container = document.getElementById("payment-methods-container");
   const checkout_container = document.getElementById("checkout-button-container");
-  const url = "http://localhost:8080/checkout";
+  const url = `${server}/checkout`;
   const options = {
     method: "POST",
     headers: {
@@ -15,17 +20,14 @@ function payment() {
     .then((response) => response.json())
     .then((data) => {
       let order_id = (data.id);
-      fetch(`http://localhost:8080/payment-method-options?order_id=${order_id}&country=USA`)
+      fetch(`${server}/payment-method-options?order_id=${order_id}&country=${country}`)
         .then((response) => response.json())
-        .then((data) => {
+        .then((pay_data) => {
           payment_container.classList.remove('hide');
           checkout_container.classList.remove('hide');
-          let paymentOptions = (data.payment_method_options);
-          console.log(paymentOptions);
-          // holds state of currently chosen payment
-          // method option
+          let paymentOptions = (pay_data.payment_method_options);
+          // holds state of currently chosen payment method option
           let selectedPaymentMethodOption = null;
-
           // utility to create a HTML DOM element
           const createElement = (tag, id) => {
             const elem = document.createElement(tag);
@@ -34,14 +36,11 @@ function payment() {
             }
             return elem;
           };
-
-          // toggle method that toggles the payment method fields when 
-          // a payment method option button is clicked
+          // toggle method that toggles the payment method fields 
           const togglePaymentMethodFormFields = (fieldsContainer) => {
             fieldsContainer.style.height = fieldsContainer.style.height === 'auto' ? '0px' : 'auto';
             fieldsContainer.style.overflow = fieldsContainer.style.overflow === 'auto' ? 'hidden' : 'auto';
           }
-
           // resets previously chosen payment method's selection state
           const resetPaymentMethodSelection = () => {
             const selectedPaymentMethods = document.getElementsByClassName('selected');
@@ -54,7 +53,6 @@ function payment() {
               selectedFieldContainer.style.overflow = 'hidden';
             }
           }
-
           // input field on change listener to get card
           // info based on card number
           const inputChangeListener = (fieldName, event) => {
@@ -65,7 +63,6 @@ function payment() {
             if (fieldName === "expiry") {
               event.target.value = "5555"
             }
-
             // method to get card details
             inaiInstance.getCardInfo(cardNumber)
               .then(cardDetails => {
@@ -115,7 +112,6 @@ function payment() {
             logoElem.src = `../assets/images/${rail}.svg`;
             railButton.appendChild(logoElem)
             railContainer.appendChild(railButton);
-
             const fieldsContainer = createElement('div', `${rail}-fields-container`);
             fieldsContainer.setAttribute('data-rail-fields', rail)
             fieldsContainer.classList.add('toggle-transition')
@@ -125,9 +121,7 @@ function payment() {
               railButton.classList.add('selected');
               togglePaymentMethodFormFields(fieldsContainer);
             }
-
-            // adds payment method option related
-            // form fields to the DOM
+            // adds payment method options
             fields.forEach(field => {
               const validations = field.validations;
               const fieldName = field.name;
@@ -192,9 +186,9 @@ function payment() {
           // on click listener for checkout button
           checkoutBtn.onclick = () => {
             let inaiInstance = window.inai.create({
-              token: "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS",
+              token: token,
               orderId: order_id,
-              countryCode: "USA",
+              countryCode: country,
             });
 
             const fieldsArray = []
@@ -210,7 +204,6 @@ function payment() {
             const paymentDetails = {
               fields: fieldsArray
             }
-
             // method to invoke payment with a payment method option
             // value and the associated payment field input details
             inaiInstance.validateFields(selectedPaymentMethodOption, paymentDetails)
@@ -221,9 +214,7 @@ function payment() {
               });
           }
         });
-
     });
-
 }
 payment();
 
