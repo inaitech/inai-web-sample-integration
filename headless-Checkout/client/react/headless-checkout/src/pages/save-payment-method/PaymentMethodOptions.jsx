@@ -26,7 +26,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        id: process.env.REACT_APP_CUSTOMER_ID // customer id saved in inai db
+                        external_id: process.env.REACT_APP_EXTERNAL_ID // merchant's representation of a customer
                     }, 
                     capture_method: 'MANUAL' // required to only save card and not charge customer
                 })
@@ -144,12 +144,12 @@ export default function PaymentMethodOptions() {
 
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
-        .then(() => {
-            alert('Congratulations! Your payment method got saved with us.');
+        .then((data) => {
+            alert(JSON.stringify(data));
             navigate('/headless-checkout-options');
         })
         .catch((err) => {
-            alert('Oops! something went wrong! Your payment method did not get saved.');
+            alert(JSON.stringify(err));
         })
     }
 
