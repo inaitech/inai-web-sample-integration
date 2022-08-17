@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaymentMethodOptions() {
-    const create_order_url = 'http://localhost:5009/v1/order';
+    const create_order_url = 'http://localhost:5009/v1/orders';
     let payment_method_options_url = 'http://localhost:5009/v1/payment-method-options';
 
     const navigate = useNavigate();
@@ -26,16 +26,16 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'test2@gmail.com'
+                        external_id: process.env.REACT_APP_EXTERNAL_ID // merchant's representation of a customer
                     }, 
-                    capture_method: 'MANUAL'
+                    capture_method: 'MANUAL' // required to only save card and not charge customer
                 })
             });
             const order_response_data = await order_response.json();
             if (order_response.status !== 201) {
                 // order creation unsuccessful!
                 setLoading(false);
-                setError(order_response_data.message);
+                setError(JSON.stringify(order_response_data));
                 return;
             }
             setOrderId(order_response_data.id);
@@ -46,7 +46,7 @@ export default function PaymentMethodOptions() {
             const payment_method_options_response_data = await payment_method_options_response.json();
             if (payment_method_options_response.status !== 200) {
                 setLoading(false);
-                setError(payment_method_options_response_data);
+                setError(JSON.stringify(payment_method_options_response_data));
                 return;
             }
 
@@ -54,7 +54,7 @@ export default function PaymentMethodOptions() {
             setLoading(false);
             setPaymentMethodOptions([...payment_method_options_response_data.payment_method_options]);
         } catch(err) {
-            setError(err.message);
+            setError(JSON.stringify(err));
         }
     }
 
@@ -133,7 +133,6 @@ export default function PaymentMethodOptions() {
             }
             current_index++;
         }
-        
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
             token: process.env.REACT_APP_CLIENT_USERNAME,
@@ -145,12 +144,12 @@ export default function PaymentMethodOptions() {
 
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
-        .then(() => {
-            alert('Congratulations! Your payment method got saved with us.');
+        .then((data) => {
+            alert(JSON.stringify(data));
             navigate('/headless-checkout-options');
         })
-        .catch(() => {
-            alert('Oops! something went wrong! Your payment method did not get saved.');
+        .catch((err) => {
+            alert(JSON.stringify(err));
         })
     }
 
@@ -203,6 +202,9 @@ export default function PaymentMethodOptions() {
                                             </div>
                                         )}
                                     </div>
+                                ) : null}
+                                {((selectedPaymentMethod === option.rail_code) && !option.form_fields.length) ? (
+                                    <div className="text-align-center my-15">No fields to display!</div>
                                 ) : null}
                             </div>
                         ))
