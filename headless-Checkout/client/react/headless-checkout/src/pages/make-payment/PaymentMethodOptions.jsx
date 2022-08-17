@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaymentMethodOptions() {
-    const create_order_url = 'http://localhost:5009/v1/order';
+    const create_order_url = 'http://localhost:5009/v1/orders';
     let payment_method_options_url = 'http://localhost:5009/v1/payment-method-options';
 
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'test2@gmail.com'
+                        external_id: process.env.REACT_APP_EXTERNAL_ID // merchant's representation of a customer
                     }
                 })
             });
@@ -34,7 +34,7 @@ export default function PaymentMethodOptions() {
             if (order_response.status !== 201) {
                 // order creation unsuccessful!
                 setLoading(false);
-                setError(order_response_data.message);
+                setError(JSON.stringify(order_response_data));
                 return;
             }
             setOrderId(order_response_data.id);
@@ -45,7 +45,7 @@ export default function PaymentMethodOptions() {
             const payment_method_options_response_data = await payment_method_options_response.json();
             if (payment_method_options_response.status !== 200) {
                 setLoading(false);
-                setError(payment_method_options_response_data);
+                setError(JSON.stringify(payment_method_options_response_data));
                 return;
             }
 
@@ -69,7 +69,34 @@ export default function PaymentMethodOptions() {
     }
 
     function validateField(value, validations) {
-        // implementation for validation left
+        if(value.length > 0){
+            // regex validation
+            let didItPassRegexValidation;
+            if(validations.pattern){
+                didItPassRegexValidation = new RegExp(validations.pattern).test(value)
+            } else {
+                didItPassRegexValidation = true;
+            }
+            if(!didItPassRegexValidation) return false;
+
+            // min_length validation
+            let didItPassMinLengthValidation;
+            if(validations.min_length){
+                didItPassMinLengthValidation = value.length >= validations.min_length;
+            } else {
+                didItPassMinLengthValidation = true;
+            }
+            if(!didItPassMinLengthValidation) return false;
+
+            // max_length validation
+            let didItPassMaxLengthValidation;
+            if(validations.max_length){
+                didItPassMaxLengthValidation = value.length <= validations.max_length;
+            } else {
+                return true;
+            }
+            return didItPassMaxLengthValidation ? true : false;
+        }
         return true;
     }
 
@@ -78,8 +105,16 @@ export default function PaymentMethodOptions() {
         {
             setPaymentDetails({...paymentDetails, [e.target.id] : {value: e.target.checked}});
         } else {
-            const fieldAfterValueUpdate = {...paymentDetails[e.target.id], value: e.target.value};
+            let fieldAfterValueUpdate;
+            let inputEntry = e.target.value;
+            if(e.target.id === 'expiry' && !inputEntry.includes('/') && inputEntry.length === 2 && e.nativeEvent.data) {
+                fieldAfterValueUpdate = {...paymentDetails[e.target.id], value: `${e.target.value}/`};
+            } else {
+                fieldAfterValueUpdate = {...paymentDetails[e.target.id], value: e.target.value};
+            }
+
             const fieldAfterValidation = {...fieldAfterValueUpdate, isValidated: validateField(fieldAfterValueUpdate.value, field.validations)}
+
             setPaymentDetails({...paymentDetails, [e.target.id]: fieldAfterValidation});
         }
     }
@@ -110,12 +145,11 @@ export default function PaymentMethodOptions() {
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
         .then(data => {
-            alert(`message: ${data.message}`, `transaction_id: ${data.transaction_id}`);
+            alert(JSON.stringify(data));
             navigate('/headless-checkout-options');
         })
         .catch(err => {
-            console.log(err);
-            alert(`message: ${err.message}`);
+            alert(JSON.stringify(err));
         })
     }
 
@@ -158,7 +192,7 @@ export default function PaymentMethodOptions() {
                                                     <span className="font-weight-bold">{field.label}</span>
                                                     {field.required ? (<span className="required-field-char">*</span>) : ''}
                                                 </label>
-                                                <input type={(field.field_type === 'textfield') ? 'text' : field.field_type} id={field.name} placeholder={field.placeholder} className="input-entry" onChange={(e) => handleChange(e, field)} />
+                                                <input type={(field.field_type === 'textfield') ? 'text' : field.field_type} id={field.name} placeholder={field.placeholder} className={`input-entry ${!paymentDetails[field.name].value.length || paymentDetails[field.name].isValidated ? '' : 'invalid-entry'}`} value={paymentDetails[field.name].value} onChange={(e) => handleChange(e, field)} />
                                             </div>
                                         ))}
                                         {(option.rail_code === 'card') && (
@@ -169,10 +203,13 @@ export default function PaymentMethodOptions() {
                                         )}
                                     </div>
                                 ) : null}
+                                {((selectedPaymentMethod === option.rail_code) && !option.form_fields.length) ? (
+                                    <div className="text-align-center my-15">No fields to display!</div>
+                                ) : null}
                             </div>
                         ))
                     }
-                    <div className="btn btn-1 border-radius-1 my-3" onClick={handleCheckout}>CHECKOUT</div>
+                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handleCheckout}>CHECKOUT</div>
                 </div>
             ) : null}
         </div>
