@@ -26,7 +26,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'testByDhirendra@gmail.com'
+                        external_id: process.env.REACT_APP_EXTERNAL_ID // merchant's representation of a customer
                     }
                 })
             });
@@ -34,7 +34,7 @@ export default function PaymentMethodOptions() {
             if (order_response.status !== 201) {
                 // order creation unsuccessful!
                 setLoading(false);
-                setError(order_response_data.message);
+                setError(JSON.stringify(order_response_data));
                 return;
             }
             setOrderId(order_response_data.id);
@@ -45,7 +45,7 @@ export default function PaymentMethodOptions() {
             const payment_method_options_response_data = await payment_method_options_response.json();
             if (payment_method_options_response.status !== 200) {
                 setLoading(false);
-                setError(payment_method_options_response_data);
+                setError(JSON.stringify(payment_method_options_response_data));
                 return;
             }
 
@@ -53,7 +53,7 @@ export default function PaymentMethodOptions() {
             setLoading(false);
             setPaymentMethodOptions([...payment_method_options_response_data.payment_method_options]);
         } catch(err) {
-            setError(err.message);
+            setError(JSON.stringify(err));
         }
     }
 
@@ -205,7 +205,7 @@ export default function PaymentMethodOptions() {
                             </div>
                         ))
                     }
-                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handlePaymentDetailsValidation}>VALIDATE PAYMENT DETAILS</div>
+                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handlePaymentDetailsValidation}>VALIDATE FIELDS</div>
                 </div>
             ) : null}
         </div>
