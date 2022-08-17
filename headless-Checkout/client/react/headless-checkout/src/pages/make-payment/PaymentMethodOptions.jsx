@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaymentMethodOptions() {
-    const create_order_url = 'http://localhost:5009/v1/order';
+    const create_order_url = 'http://localhost:5009/v1/orders';
     let payment_method_options_url = 'http://localhost:5009/v1/payment-method-options';
 
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'test2@gmail.com'
+                        external_id: process.env.REACT_APP_EXTERNAL_ID // merchant's representation of a customer
                     }
                 })
             });
@@ -34,7 +34,7 @@ export default function PaymentMethodOptions() {
             if (order_response.status !== 201) {
                 // order creation unsuccessful!
                 setLoading(false);
-                setError(order_response_data.message);
+                setError(JSON.stringify(order_response_data));
                 return;
             }
             setOrderId(order_response_data.id);
@@ -45,7 +45,7 @@ export default function PaymentMethodOptions() {
             const payment_method_options_response_data = await payment_method_options_response.json();
             if (payment_method_options_response.status !== 200) {
                 setLoading(false);
-                setError(payment_method_options_response_data);
+                setError(JSON.stringify(payment_method_options_response_data));
                 return;
             }
 
@@ -145,11 +145,11 @@ export default function PaymentMethodOptions() {
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
         .then(data => {
-            alert(`message: ${data.message}`, `transaction_id: ${data.transaction_id}`);
+            alert(JSON.stringify(data));
             navigate('/headless-checkout-options');
         })
         .catch(err => {
-            alert(`message: ${err.message}`);
+            alert(JSON.stringify(err));
         })
     }
 
@@ -202,6 +202,9 @@ export default function PaymentMethodOptions() {
                                             </div>
                                         )}
                                     </div>
+                                ) : null}
+                                {((selectedPaymentMethod === option.rail_code) && !option.form_fields.length) ? (
+                                    <div className="text-align-center my-15">No fields to display!</div>
                                 ) : null}
                             </div>
                         ))
