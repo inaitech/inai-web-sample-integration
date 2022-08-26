@@ -9,26 +9,26 @@ This repository demonstrates how to integrate Inai’s web dropin-checkout sdk i
     - Folder : /inai-web-sample-integration/dropin-checkout/client/vanilla
 
 ## Prerequisites
-- To begin, you will require the inai merchant dashboard credentials, client username and client password values. Instructions to get these can be found [here](https://docs.inai.io/docs/getting-started)
+- To begin, you will require the inai client username and client password values. Instructions to get these can be found [here](https://docs.inai.io/docs/getting-started)
 - Make sure the following steps are completed in the merchant dashboard,
   - [Adding a Provider](https://docs.inai.io/docs/adding-a-payment-processor)
   - [Adding Payment Methods](https://docs.inai.io/docs/adding-a-payment-method)
   - [Customizing Checkout](https://docs.inai.io/docs/customizing-your-checkout)
 
 ### Minimum Requirements
-IDE, NodeJs & yarn
+IDE, NodeJs, yarn & http-server
 
 ## Setup
-To setup the inai sample app for <platform>, follow the steps below,
+To setup the inai sample app in vanilla JS, follow the steps below,
 1. `git clone https://github.com/inaitech/inai-web-sample-integration.git`
-2. cd `/inai-web-sample-integration/dropin-checkout/server/node` and if .env file is not present, then create it with below mentioned variables and their corresponding values:
-    - client_username=<inai-merchant-dashboard-credential-username>
-    - client_password=<inai-merchant-dashboard-credential-password>
-    - amount=100
-    - currency=INR
+2. Navigate to `/inai-web-sample-integration/dropin-checkout/server/node/.env` and update the environment variables:
+    - client_username=<inai-client-username>
+    - client_password=<inai-client-password>
+    - amount=
+    - currency=
 3. Run commands`yarn install` to install dependencies & then `yarn start` to the start the server.
-4. Navigate to `/inai-web-sample-integration/dropin-checkout/client/vanilla/pages/checkout.html` and update the value of external_id and token.
-5. Navigate to `/inai-web-sample-integration/dropin-checkout/client/vanilla/index.html` and Go Live to run your frontend server.
+4. Navigate to `/inai-web-sample-integration/dropin-checkout/client/vanilla/pages/checkout.html` and update the values of `external_id` and `token`.
+5. Navigate to `/inai-web-sample-integration/dropin-checkout/client/vanilla/index.html` and serve the `index.html` file using http-server.
 
 ## FAQs
 <TBA>

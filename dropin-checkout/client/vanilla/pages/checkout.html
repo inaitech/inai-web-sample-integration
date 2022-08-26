@@ -25,7 +25,7 @@
                 },
                 body: JSON.stringify({
                     customer: {
-                        external_id: 'cust_123' // merchant's representation of customer // should be updated
+                        external_id: "< merchant's representation of customer >" // should be updated
                     }
                 })
             });
@@ -41,7 +41,7 @@
             // order created successfully // now initialise inai dropin checkout
             const response = await inai.initialize({
                 containerId: "inai-widget",
-                token: "718491ee-e497-4d15-9af9-erty5698fe", // inai merchant dashboard credential username // should be updated 
+                token: "< inai client username >", // should be updated 
                 orderId: res_data.id,
                 styles: {
                     container: {},
