@@ -27,7 +27,8 @@ To setup the inai sample app for <platform>, follow the steps below,
     - amount=100
     - currency=INR
 3. Run commands`yarn install` to install dependencies & then `yarn start` to the start the server.
-4. Navigate to `/inai-web-sample-integration/dropin-checkout/client/vanilla/index.html` and Go Live to run your frontend server.
+4. Navigate to `/inai-web-sample-integration/dropin-checkout/client/vanilla/pages/checkout.html` and update the value of external_id and token.
+5. Navigate to `/inai-web-sample-integration/dropin-checkout/client/vanilla/index.html` and Go Live to run your frontend server.
 
 ## FAQs
 <TBA>

@@ -13,7 +13,7 @@
 </body>
 </html>
 <script>
-    const backend_url = 'http://localhost:5999/v1/orders';
+    const backend_url = 'http://localhost:5999/v1/orders'; // port number should be updated as per port on which backend server is running
 
     const handleCheckout = async () => {
         try{
@@ -25,7 +25,7 @@
                 },
                 body: JSON.stringify({
                     customer: {
-                        external_id: 'cust_123'
+                        external_id: 'cust_123' // merchant's representation of customer // should be updated
                     }
                 })
             });
@@ -41,8 +41,8 @@
             // order created successfully // now initialise inai dropin checkout
             const response = await inai.initialize({
                 containerId: "inai-widget",
-                token: "718491ee-e497-4d15-9af9-f1a6abbed1cd", // inai merchant dashboard credential username
-                orderId: res_data.id, // order id
+                token: "718491ee-e497-4d15-9af9-erty5698fe", // inai merchant dashboard credential username // should be updated 
+                orderId: res_data.id,
                 styles: {
                     container: {},
                     cta: {}, 
