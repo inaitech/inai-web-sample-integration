@@ -39,7 +39,9 @@ To setup the inai sample app for vanilla js, follow the steps below,
 5. Update `token` with the `client_username` value added in the `.env` for server
 6. Update `country` with the your country of checkout
 7. Update `externalCustomerId` with your customer identifier
-8. Now navigate to `/headless-checkout/client/vanilla` and run a http-server of your choice to serve the client application
+8. Update `amount` for the order 
+9. Update `currency` for the order 
+10. Now navigate to `/headless-checkout/client/vanilla` and run a http-server of your choice to serve the client application
 
 ## FAQs
 <TBA>
