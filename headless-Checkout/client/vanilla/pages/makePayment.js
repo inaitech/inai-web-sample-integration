@@ -1,8 +1,10 @@
 const serverUrl = "http://localhost:5999";
 //replace token with client id
-const token = "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS";
-const country = "IND";
-const externalCustomerId = "ext_cust_123"
+const token = "<token>";
+const country = "<country>";
+const externalCustomerId = "<externalCustomerId>";
+const currency = "<currency>";
+const amount = "<amount>";
 
 const paymentContainer = document.getElementById("payment-methods-container");
 const checkoutContainer = document.getElementById("checkout-button-container");
@@ -25,8 +27,8 @@ const processCheckout = () => {
             "Content-Type": "application/json;charset=UTF-8",
         },
         body: JSON.stringify({
-            amount: "12",
-            currency: "USD",
+            amount,
+            currency,
             customer: {
                 external_id: externalCustomerId
             }
