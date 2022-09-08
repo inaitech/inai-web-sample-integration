@@ -1,12 +1,11 @@
-//local-server url and token
-//replace this url with your local-server url
-const server = "http://localhost:8080";
+const serverUrl = "http://localhost:5999";
 //replace token with client id
 const token = "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS";
-const country = "USA";
+const country = "IND";
+const externalCustomerId = "ext_cust_123"
 
-const payment_container = document.getElementById("payment-methods-container");
-const checkout_container = document.getElementById("checkout-button-container");
+const paymentContainer = document.getElementById("payment-methods-container");
+const checkoutContainer = document.getElementById("checkout-button-container");
 
 // utility to create a HTML DOM element
 const createElement = (tag, id) => {
@@ -17,25 +16,32 @@ const createElement = (tag, id) => {
     return elem;
 };
 
-function payment() {
-    const url = `${server}/checkout`;
+const processCheckout = () => {
+    const url = `${serverUrl}/v1/orders`;
     const options = {
         method: "POST",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
         },
+        body: JSON.stringify({
+            amount: "12",
+            currency: "USD",
+            customer: {
+                external_id: externalCustomerId
+            }
+        })
     };
     fetch(url, options)
         .then((response) => response.json())
         .then((data) => {
-            let order_id = (data.id);
-            fetch(`${server}/payment-method-options?order_id=${order_id}&country=${country}`)
+            let orderId = (data.id);
+            fetch(`${serverUrl}/v1/payment-method-options?order_id=${orderId}&country=${country}`)
                 .then((response) => response.json())
-                .then((payment_data) => {
-                    payment_container.classList.remove('hide');
-                    checkout_container.classList.remove('hide');
-                    let paymentOptions = (payment_data.payment_method_options);
+                .then((paymentData) => {
+                    paymentContainer.classList.remove('hide');
+                    checkoutContainer.classList.remove('hide');
+                    let paymentOptions = (paymentData.payment_method_options);
 
                     // holds state of currently chosen payment
                     let selectedPaymentMethodOption = null;
@@ -49,11 +55,11 @@ function payment() {
                     // resets previously chosen payment method's selection state
                     const resetPaymentMethodSelection = () => {
                         const selectedPaymentMethods = document.getElementsByClassName('selected');
-                        for (selectedPaymentMethod of selectedPaymentMethods) {
+                        for (let selectedPaymentMethod of selectedPaymentMethods) {
                             selectedPaymentMethod.classList.remove('selected');
                         }
                         const selectedFieldContainers = document.getElementsByClassName('toggle-transition');
-                        for (selectedFieldContainer of selectedFieldContainers) {
+                        for (let selectedFieldContainer of selectedFieldContainers) {
                             selectedFieldContainer.style.height = '0px';
                             selectedFieldContainer.style.overflow = 'hidden';
                         }
@@ -76,32 +82,26 @@ function payment() {
                                 console.error(error);
                             })
                     }
-                    function validateField(value, validations) {
+                    const validateField = (value, validations) => {
                         if (value.length > 0) {
                             // regex validation
-                            let didItPassRegexValidation;
+                            let isValidFormat = true;
                             if (validations.pattern) {
-                                didItPassRegexValidation = new RegExp(validations.pattern).test(value)
-                            } else {
-                                didItPassRegexValidation = true;
+                                isValidFormat = new RegExp(validations.pattern).test(value)
                             }
-                            if (!didItPassRegexValidation) return false;
+
                             // min_length validation
-                            let didItPassMinLengthValidation;
+                            let isValidMinLength = true;
                             if (validations.min_length) {
-                                didItPassMinLengthValidation = value.length >= validations.min_length;
-                            } else {
-                                didItPassMinLengthValidation = true;
+                                isValidMinLength = value.length >= validations.min_length;
                             }
-                            if (!didItPassMinLengthValidation) return false;
+
                             // max_length validation
-                            let didItPassMaxLengthValidation;
+                            let isValidMaxLength = true;
                             if (validations.max_length) {
-                                didItPassMaxLengthValidation = value.length <= validations.max_length;
-                            } else {
-                                return true;
+                                isValidMaxLength = value.length <= validations.max_length;
                             }
-                            return didItPassMaxLengthValidation ? true : false;
+                            return isValidFormat && isValidMinLength && isValidMaxLength;
                         }
                         return true;
                     }
@@ -111,9 +111,9 @@ function payment() {
                         const fields = option.form_fields;
                         const railContainer = createElement('div', rail);
                         const railButton = createElement('button', `${rail}-button`);
-                        railButton.classList.add('payment-method-button')
-                        const logoElem = createElement('img', `${rail}-logo`)
-                        logoElem.src = `../assets/images/${rail}.svg`;
+                        railButton.classList.add('payment-method-button');
+                        const logoElem = createElement('span');
+                        logoElem.innerText = rail;
                         railButton.appendChild(logoElem)
                         railContainer.appendChild(railButton);
 
@@ -190,17 +190,18 @@ function payment() {
                     checkoutBtn.onclick = () => {
                         let inaiInstance = window.inai.create({
                             token: token,
-                            orderId: order_id,
-                            countryCode: "USA",
+                            orderId: orderId,
+                            countryCode: country,
                         });
 
                         const fieldsArray = []
                         const paymentMethodFieldsContainer = document.querySelectorAll(`[data-rail-fields=${selectedPaymentMethodOption}]`)[0];
                         const paymentInputs = paymentMethodFieldsContainer.getElementsByClassName('payment-input');
-                        for (paymentInput of paymentInputs) {
+                        for (let paymentInput of paymentInputs) {
+                            const isCheckbox = paymentInput.type === "checkbox";
                             const formInputDetails = {
                                 name: paymentInput.getAttribute("data-name"),
-                                value: paymentInput.value
+                                value: isCheckbox ? paymentInput.checked : paymentInput.value
                             }
                             fieldsArray.push(formInputDetails)
                         }
@@ -219,6 +220,4 @@ function payment() {
                 });
         });
 }
-payment();
-
-
+processCheckout();

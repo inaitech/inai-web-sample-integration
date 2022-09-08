@@ -1,15 +1,14 @@
 #homepage {
+  font-weight: 500;
   background-color: black;
   color: white;
   text-align: center;
-  font-size: xx-large;
-  height: 70px;
-  width: 500px;
-  padding-top: 2%;
+  font-size: 16px;
   cursor: pointer;
-  margin: auto;
   border-radius: 12px;
-  padding-top: 15px;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
 }
 
 a {
