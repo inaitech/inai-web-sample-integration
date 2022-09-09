@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product</title>
+    <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+    <div id="product-container" class="outer-container product-container color-grey d-flex flex-column align-items-center gap-40px">
+        <img src="../assets/images/inai-logo.svg" alt="inai-logo" class="w-30">
+        <img src="../assets/images/product.jpg" alt="product-img" class="w-50">
+        <p>MANCHESTER UNITED 21/22 HOME JERSEY</p>
+        <div class="flex d-flex flex-column gap-10px">
+            <p>A FAN JERSEY INSPIRED BY A LEGENDARY HOME KIT.</p>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum illum error possimus, itaque voluptatem, necessitatibus expedita nesciunt, sequi nobis aliquid laudantium reprehenderit veritatis minima? Totam quidem aliquam atque aliquid. Dicta! Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nulla modi molestiae vitae, aperiam provident dolore?
+            </p>
+        </div>
+        <p>
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolores harum laborum dolorem. Officiis accusamus saepe dolore quos eos maiores harum!
+        </p>
+        <button id="buy-now-btn" class="btn btn-md m-2">Buy Now</button>
+    </div>
+</body>
+</html>
+
+<script>
+    document.getElementById('buy-now-btn').addEventListener('click', () => {
+        window.location.href = '/vanilla/pages/checkout.html';
+    });
+</script>
