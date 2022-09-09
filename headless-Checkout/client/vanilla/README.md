@@ -6,7 +6,7 @@ This repository demonstrates how to integrate Inai's Headless-checkout into your
 ## Features
 ### Headless Checkout
 - Make a payment with variety of payment methods
-    - File : headless-checkout/client/vanilla/pages/makePayment.html
+    - File : [headless-checkout/client/vanilla/pages/make-payment.html](https://github.com/inaitech/inai-web-sample-integration/blob/main/headless-Checkout/client/vanilla/pages/make-payment.html)
 - Save a payment method
     - File : headless-checkout/client/vanilla/pages/savePayment.html
 - Pay with a saved payment method
@@ -32,10 +32,10 @@ This repository demonstrates how to integrate Inai's Headless-checkout into your
 
 ## Setup
 To setup the inai sample app for vanilla js, follow the steps below,
-1. `git clone https://github.com/inaitech/inai-web-sample-integration`
+1. `git clone git@github.com:inaitech/inai-web-sample-integration.git`
 2. Navigate to  `/headless-checkout/server/node` folder and follow the steps mentioned in the README.md to start the server
 3. Open `makePayment.js` located under pages `pages`
-4. Make sure `serverUrl` is points to the server running locally
+4. Make sure `serverUrl` points to the server running locally
 5. Update `token` with the `client_username` value added in the `.env` for server
 6. Update `country` with the your country of checkout
 7. Update `externalCustomerId` with your customer identifier
