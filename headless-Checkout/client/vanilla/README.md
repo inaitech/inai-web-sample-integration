@@ -47,5 +47,5 @@ To setup the inai sample app for vanilla js, follow the steps below,
 <TBA>
 
 ## Support
-Inai ios sdk reference docs available [here](https://docs.inai.io/docs/headless-checkout).
-If you found a bug or want to suggest a new [feature/use case/sample], please contact **[customer support](mailto:support@inai.io)**.
+Inai Headless Checkout SDK reference docs available [here](https://docs.inai.io/docs/headless-checkout).
+If you find a bug or want to suggest a new [feature/use case/sample], please contact **[customer support](mailto:support@inai.io)**.
