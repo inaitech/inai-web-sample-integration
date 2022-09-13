@@ -21,12 +21,10 @@ require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 
-// CRUD operations
 // create an order
 app.post('/v1/orders', async (req, res) => {
     try{
         const token = Buffer.from(`${process.env.client_username}:${process.env.client_password}`).toString('base64');
-        req.body = {...req.body, amount: process.env.amount, currency: process.env.currency};
         const options = {
             method: 'POST',
             headers: {
