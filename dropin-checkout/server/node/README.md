@@ -9,5 +9,10 @@ To start the NodeJS server:
 3. Update the following environment variables in the `.env` file. This can be accessed from inai’s merchant dashboard under `Settings > Credentials`
     - client_username
     - client_password
+    
+| **variables** | **description**                                               |
+|---------------|---------------------------------------------------------------|
+| client_username | client username under **Settings > Credentials** in dashboard |
+| client_password | client password under **Settings > Credentials** in dashboard                             |
 
 4. Run command `yarn start` to start the server
