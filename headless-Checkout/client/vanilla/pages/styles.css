@@ -18,13 +18,13 @@ a {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  margin: 20;
+  margin: 12px 0;
   box-sizing: border-box;
 }
 
 label {
   display: block;
-  padding: 4px;
+  padding: 4px 0;
 }
 
 label input {
@@ -79,6 +79,7 @@ label span.required:after {
   transition: height 1000ms ease-out;
   height: 0px;
   overflow: hidden;
+  margin: 0 12px;
 }
 
 #checkout-cta {
