@@ -41,7 +41,6 @@ const processCheckout = () => {
                 .then((response) => response.json())
                 .then((paymentData) => {
                     paymentContainer.classList.remove('hide');
-                    checkoutContainer.classList.remove('hide');
                     let paymentOptions = (paymentData.payment_method_options);
 
                     let inaiInstance = window.inai.create({
@@ -191,7 +190,7 @@ const processCheckout = () => {
 
                     const checkoutBtn = createElement('button', 'checkout-cta');
                     checkoutBtn.innerText = 'Checkout';
-                    document.getElementById('checkout-button-container').appendChild(checkoutBtn);
+                    document.getElementById('payment-methods-container').appendChild(checkoutBtn);
 
                     // on click listener for checkout button
                     checkoutBtn.onclick = () => {

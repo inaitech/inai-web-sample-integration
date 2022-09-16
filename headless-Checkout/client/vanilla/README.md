@@ -43,6 +43,10 @@ To setup the inai sample app for vanilla js, follow the steps below,
 
 6. Serve [index.html](https://github.com/inaitech/inai-web-sample-integration/blob/main/headless-Checkout/client/vanilla/index.html) with http-server.
 
+## Sample Checkout Screen
+<img width="448" alt="sample-drop-in-checkout-web" src="https://user-images.githubusercontent.com/88765228/190576481-7834f6d2-e26e-4fb7-9200-1100643f4041.png">
+
+
 ## FAQs
 <TBA>
 
