@@ -65,6 +65,10 @@ label span.required:after {
   font-size: 12px;
   cursor: pointer;
   font-weight: 600;
+  text-transform: capitalize;
+  -webkit-box-shadow: 3px 3px 10px -6px rgba(0,0,0,0.75);
+  -moz-box-shadow: 3px 3px 10px -6px rgba(0,0,0,0.75);
+  box-shadow: 3px 3px 10px -6px rgba(0,0,0,0.75);
 }
 
 .payment-method-button.selected {
@@ -92,6 +96,9 @@ label span.required:after {
   font-weight: 600;
   border-radius: 5px;
   cursor: pointer;
+  -webkit-box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
+  -moz-box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
+  box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
 }
 
 #payment-methods-container {
@@ -134,15 +141,18 @@ label span.required:after {
 }
 
 #btn {
-  height: 50px;
-  width: 200px;
-  font-size: 20px;
-  margin-left: 25%;
-  margin-top: 10%;
   background-color: black;
   color: white;
+  border: none;
+  min-width: 320px;
+  padding: 12px;
+  font-weight: 600;
   border-radius: 5px;
   cursor: pointer;
+  margin: 18px 20%;
+  -webkit-box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
+  -moz-box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
+  box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
 }
 
 .imgcontainer {
