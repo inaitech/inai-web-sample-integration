@@ -31,7 +31,7 @@ export default function PaymentMethodOptions() {
                     customer: {
                         external_id: externalId // merchant's representation of a customer
                     }, 
-                    capture_method: 'MANUAL'
+                    capture_method: 'MANUAL' // required to only save card and not charge customer
                 })
             });
             const orderResponseData = await orderResponse.json();
@@ -136,7 +136,6 @@ export default function PaymentMethodOptions() {
             }
             currentIndex++;
         }
-        
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
             token: process.env.REACT_APP_CLIENT_USERNAME,
@@ -148,12 +147,12 @@ export default function PaymentMethodOptions() {
 
         // invoke payment
         inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
-        .then(() => {
-            alert('Congratulations! Your payment method got saved with us.');
+        .then((data) => {
+            alert(JSON.stringify(data));
             navigate('/headless-checkout-options');
         })
-        .catch(() => {
-            alert('Oops! something went wrong! Your payment method did not get saved.');
+        .catch((err) => {
+            alert(JSON.stringify(err));
         })
     }
 
@@ -206,6 +205,9 @@ export default function PaymentMethodOptions() {
                                             </div>
                                         )}
                                     </div>
+                                ) : null}
+                                {((selectedPaymentMethod === option.rail_code) && !option.form_fields.length) ? (
+                                    <div className="text-align-center my-15">No fields to display!</div>
                                 ) : null}
                             </div>
                         ))
