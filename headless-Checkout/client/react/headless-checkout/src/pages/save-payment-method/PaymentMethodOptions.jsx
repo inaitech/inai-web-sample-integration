@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaymentMethodOptions() {
-    const create_order_url = 'http://localhost:5009/v1/order';
-    let payment_method_options_url = 'http://localhost:5009/v1/payment-method-options';
+    const createOrderUrl = 'http://localhost:5009/v1/order';
+    let paymentMethodOptionsUrl = 'http://localhost:5009/v1/payment-method-options';
+    const savedPaymentMethod = false;
+    const country = "<country>";
+    const externalId = "<external_id>" // merchant's representation of a customer
 
     const navigate = useNavigate();
 
@@ -18,7 +21,7 @@ export default function PaymentMethodOptions() {
     const getPaymentMethods = async () => {
         try{
             // create order
-            const order_response = await fetch(create_order_url, {
+            const orderResponse = await fetch(createOrderUrl, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json', 
@@ -26,35 +29,35 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        email: 'test2@gmail.com'
+                        external_id: externalId // merchant's representation of a customer
                     }, 
                     capture_method: 'MANUAL'
                 })
             });
-            const order_response_data = await order_response.json();
-            if (order_response.status !== 201) {
+            const orderResponseData = await orderResponse.json();
+            if (orderResponse.status !== 201) {
                 // order creation unsuccessful!
                 setLoading(false);
-                setError(order_response_data.message);
+                setError(JSON.stringify(orderResponseData));
                 return;
             }
-            setOrderId(order_response_data.id);
+            setOrderId(orderResponseData.id);
 
             // order creation successful // get payment method options
-            const new_payment_method_options_url = payment_method_options_url + `?country=IND&saved_payment_method=false&order_id=${order_response_data.id}`;
-            const payment_method_options_response = await fetch(new_payment_method_options_url);
-            const payment_method_options_response_data = await payment_method_options_response.json();
-            if (payment_method_options_response.status !== 200) {
+            const newPaymentMethodOptionsUrl = paymentMethodOptionsUrl + `?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
+            const paymentMethodOptionsResponse = await fetch(newPaymentMethodOptionsUrl);
+            const paymentMethodOptionsResponseData = await paymentMethodOptionsResponse.json();
+            if (paymentMethodOptionsResponse.status !== 200) {
                 setLoading(false);
-                setError(payment_method_options_response_data);
+                setError(JSON.stringify(paymentMethodOptionsResponseData));
                 return;
             }
 
             // now render payment method options
             setLoading(false);
-            setPaymentMethodOptions([...payment_method_options_response_data.payment_method_options]);
+            setPaymentMethodOptions([...paymentMethodOptionsResponseData.payment_method_options]);
         } catch(err) {
-            setError(err.message);
+            setError(JSON.stringify(err));
         }
     }
 
@@ -125,20 +128,20 @@ export default function PaymentMethodOptions() {
         const formattedPaymentDetails = {
             fields: []
         };
-        let current_index = 0;
+        let currentIndex = 0;
         for(let key in paymentDetails){
-            formattedPaymentDetails.fields[current_index] = {
+            formattedPaymentDetails.fields[currentIndex] = {
                 name: key,
                 value: paymentDetails[key].value
             }
-            current_index++;
+            currentIndex++;
         }
         
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
             token: process.env.REACT_APP_CLIENT_USERNAME,
             orderId: orderId,
-            countryCode: 'IND',
+            countryCode: country,
             redirectUrl: '',
             locale: ''
         });
