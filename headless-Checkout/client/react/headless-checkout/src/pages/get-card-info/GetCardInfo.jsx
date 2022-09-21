@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function GetCardInfo() {
-    const create_order_url = 'http://localhost:5009/v1/orders';
+    const createOrderUrl = 'http://localhost:5009/v1/orders';
+    const country = "<country>"; // An ISO 3166-1 alpha-3 country code
+    const externalId = "<external_id>" // merchant's representation of a customer
+    const amount = "<amount>"; // The amount of money, either a whole number or a number with up to 3 decimal places.
+    const currency = "<currency>"; // An ISO 4217 alpha currency code.
 
     const [loading, setLoading] = useState(false);
     const [cardNumber, setCardNumber] = useState('');
@@ -13,21 +17,23 @@ export default function GetCardInfo() {
         try{
             setLoading(true);
             // create order // to create inai instance
-            const order_response = await fetch(create_order_url, {
+            const orderResponse = await fetch(createOrderUrl, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json', 
                     'Content-Type': 'application/json',
                 },
                 body : JSON.stringify({
+                    amount,
+                    currency,
                     customer: {
-                        external_id: process.env.REACT_APP_EXTERNAL_ID
+                        external_id: externalId // merchant's representation of a customer
                     }
                 })
             });
-            const order_response_data = await order_response.json();
+            const orderResponseData = await orderResponse.json();
             setLoading(false);
-            if (order_response.status !== 201) {
+            if (orderResponse.status !== 201) {
                 // order creation unsuccessful!
                 alert('order creation for creating new instance of inai checkout is unsuccessful!')
                 return;
@@ -35,8 +41,8 @@ export default function GetCardInfo() {
             // create new instance of inai checkout
             const inaiInstance = window.inai.create({
                 token: process.env.REACT_APP_CLIENT_USERNAME,
-                orderId: order_response_data.id,
-                countryCode: 'IND',
+                orderId: orderResponseData.id,
+                countryCode: country,
                 redirectUrl: '',
                 locale: ''
             });
