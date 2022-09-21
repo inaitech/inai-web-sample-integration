@@ -151,11 +151,7 @@ export default function PaymentMethodOptions() {
             navigate('/headless-checkout-options');
         })
         .catch(err => {
-<<<<<<< HEAD
-            alert(`message: ${err.message}`);
-=======
             alert(JSON.stringify(err));
->>>>>>> f63e8c3af6b7fc1c54829cabb36fb1113b8b4846
         })
     }
 
