@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 export default function PaymentMethodOptions() {
     const createOrderUrl = 'http://localhost:5009/v1/orders';
     let paymentMethodOptionsUrl = 'http://localhost:5009/v1/payment-method-options';
-    const country = "IND";
     const savedPaymentMethod = false;
+    const country = "<country>";
+    const externalId = "<external_id>" // merchant's representation of a customer
 
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -27,7 +28,7 @@ export default function PaymentMethodOptions() {
                 },
                 body : JSON.stringify({
                     customer: {
-                        external_id: process.env.REACT_APP_EXTERNAL_ID // merchant's representation of a customer
+                        external_id: externalId // merchant's representation of a customer
                     }
                 })
             });
