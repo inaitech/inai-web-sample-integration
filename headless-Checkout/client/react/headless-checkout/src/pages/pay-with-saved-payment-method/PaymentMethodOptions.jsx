@@ -2,15 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaymentMethodOptions() {
-    const create_order_url = 'http://localhost:5009/v1/orders';
-    let payment_method_options_url = 'http://localhost:5009/v1/payment-method-options';
+    const createOrderUrl = 'http://localhost:5009/v1/orders';
+    let paymentMethodOptionsUrl = 'http://localhost:5009/v1/payment-method-options';
+    const savedPaymentMethod = true;
+    const country = "<country>"; // An ISO 3166-1 alpha-3 country code
+    const externalId = "<external_id>" // merchant's representation of a customer
+    const amount = "<amount>"; // The amount of money, either a whole number or a number with up to 3 decimal places.
+    const currency = "<currency>"; // An ISO 4217 alpha currency code.
 
     const navigate = useNavigate();
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [paymentMethodOptionsObj, setPaymentMethodOptionsObj] = useState({});
-    console.log('paymentMethodOptionsObj', paymentMethodOptionsObj);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null);
     const [paymentDetails, setPaymentDetails] = useState({});
@@ -21,53 +24,55 @@ export default function PaymentMethodOptions() {
     const getPaymentMethods = async () => {
         try{
             // create order
-            const order_response = await fetch(create_order_url, {
+            const orderResponse = await fetch(createOrderUrl, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json', 
                     'Content-Type': 'application/json',
                 },
                 body : JSON.stringify({
+                    amount, 
+                    currency,
                     customer: {
-                        external_id: process.env.REACT_APP_EXTERNAL_ID // merchant's representation of a customer
+                        external_id: externalId // merchant's representation of a customer
                     }
                 })
             });
-            const order_response_data = await order_response.json();
+            const orderResponseData = await orderResponse.json();
             setLoading(false);
-            if (order_response.status !== 201) {
+            if (orderResponse.status !== 201) {
                 // order creation unsuccessful!
-                setError(`Error: ${order_response_data.detail}`);
+                setError(JSON.stringify(orderResponseData));
                 return;
             }
-            setOrderId(order_response_data.id);
+            setOrderId(orderResponseData.id);
 
-            // now get customer's saved payment methods and render them 
-            const customer_saved_payment_methods_url = `http://localhost:5009/v1/customers/${order_response_data.customer_id}/payment-methods`;
-            const customer_saved_payment_methods_res = await fetch(customer_saved_payment_methods_url);
-            const customer_saved_payment_methods_res_data = await customer_saved_payment_methods_res.json();
-            setCustomerSavedPaymentMethods(customer_saved_payment_methods_res_data.payment_methods);
+            // order creation successful // now get customer's saved payment methods and render them 
+            const customerSavedPaymentMethodsUrl = `http://localhost:5009/v1/customers/${orderResponseData.customer_id}/payment-methods`;
+            const customerSavedPaymentMethodsRes = await fetch(customerSavedPaymentMethodsUrl);
+            const customerSavedPaymentMethodsResData = await customerSavedPaymentMethodsRes.json();
+            setCustomerSavedPaymentMethods(customerSavedPaymentMethodsResData.payment_methods);
 
-            // get payment method options with saved_payment_method set to true (to display fields to be filled by customer when any payment method is selected for payment)
-            const new_payment_method_options_url = payment_method_options_url + `?country=IND&saved_payment_method=true&order_id=${order_response_data.id}`;
-            const payment_method_options_response = await fetch(new_payment_method_options_url);
-            const payment_method_options_response_data = await payment_method_options_response.json();
+            // get payment method options with saved_payment_method set to true (to display fields to be filled by customer when any saved payment method option is selected for payment)
+            const newPaymentMethodOptionsUrl = paymentMethodOptionsUrl + `?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
+            const paymentMethodOptionsResponse = await fetch(newPaymentMethodOptionsUrl);
+            const paymentMethodOptionsResponseData = await paymentMethodOptionsResponse.json();
             setLoading(false);
-            if (payment_method_options_response.status !== 200) {
-                setError(JSON.stringify(payment_method_options_response_data));
+            if (paymentMethodOptionsResponse.status !== 200) {
+                setError(JSON.stringify(paymentMethodOptionsResponseData));
                 return;
             }
 
             // update states
-            setPaymentMethodOptionsObj(createPaymentMethodOptionsObj(payment_method_options_response_data.payment_method_options));
+            setPaymentMethodOptionsObj(createPaymentMethodOptionsObj(paymentMethodOptionsResponseData.payment_method_options));
         } catch(err) {
             setError(err.message);
         }
     }
 
-    const createPaymentMethodOptionsObj = (payment_method_options) => {
+    const createPaymentMethodOptionsObj = (paymentMethodOptions) => {
         const obj = {};
-        for (let option of payment_method_options) {
+        for (let option of paymentMethodOptions) {
             obj[option.rail_code] = option;
         }
         return obj;
@@ -141,13 +146,13 @@ export default function PaymentMethodOptions() {
             fields: [],
             paymentMethodId: selectedPaymentMethodId
         };
-        let current_index = 0;
+        let currentIndex = 0;
         for(let key in paymentDetails){
-            formattedPaymentDetails.fields[current_index] = {
+            formattedPaymentDetails.fields[currentIndex] = {
                 name: key,
                 value: paymentDetails[key].value
             }
-            current_index++;
+            currentIndex++;
         }
 
         
@@ -155,7 +160,7 @@ export default function PaymentMethodOptions() {
         const inaiInstance = window.inai.create({
             token: process.env.REACT_APP_CLIENT_USERNAME,
             orderId: orderId,
-            countryCode: 'IND',
+            countryCode: country,
             redirectUrl: '',
             locale: ''
         });

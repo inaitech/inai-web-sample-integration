@@ -5,7 +5,7 @@ export default function PaymentMethodOptions() {
     const createOrderUrl = 'http://localhost:5009/v1/order';
     let paymentMethodOptionsUrl = 'http://localhost:5009/v1/payment-method-options';
     const savedPaymentMethod = false;
-    const country = "<country>";
+    const country = "<country>"; // An ISO 3166-1 alpha-3 country code
     const externalId = "<external_id>" // merchant's representation of a customer
     const amount = "<amount>"; // The amount of money, either a whole number or a number with up to 3 decimal places.
     const currency = "<currency>"; // An ISO 4217 alpha currency code.
