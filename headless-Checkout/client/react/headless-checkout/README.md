@@ -1,4 +1,3 @@
-# inai Checkout
 
 ## Overview
 This repository demonstrates how to integrate Inai’s web headless checkout sdk into your project.
