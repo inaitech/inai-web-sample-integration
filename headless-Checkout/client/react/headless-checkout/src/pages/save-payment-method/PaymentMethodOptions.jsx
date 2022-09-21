@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PaymentMethodOptions() {
-    const createOrderUrl = 'http://localhost:5009/v1/orders';
+    const createOrderUrl = 'http://localhost:5009/v1/order';
     let paymentMethodOptionsUrl = 'http://localhost:5009/v1/payment-method-options';
     const savedPaymentMethod = false;
     const country = "<country>"; // An ISO 3166-1 alpha-3 country code
@@ -11,6 +11,7 @@ export default function PaymentMethodOptions() {
     const currency = "<currency>"; // An ISO 4217 alpha currency code.
 
     const navigate = useNavigate();
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [paymentMethodOptions, setPaymentMethodOptions] = useState([]);
@@ -29,11 +30,12 @@ export default function PaymentMethodOptions() {
                     'Content-Type': 'application/json',
                 },
                 body : JSON.stringify({
-                    amount, 
+                    amount,
                     currency,
                     customer: {
                         external_id: externalId // merchant's representation of a customer
-                    }
+                    }, 
+                    capture_method: 'MANUAL' // required to only save card and not charge customer
                 })
             });
             const orderResponseData = await orderResponse.json();
@@ -45,7 +47,7 @@ export default function PaymentMethodOptions() {
             }
             setOrderId(orderResponseData.id);
 
-            // get payment method options // order creation successful
+            // order creation successful // get payment method options
             const newPaymentMethodOptionsUrl = paymentMethodOptionsUrl + `?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
             const paymentMethodOptionsResponse = await fetch(newPaymentMethodOptionsUrl);
             const paymentMethodOptionsResponseData = await paymentMethodOptionsResponse.json();
@@ -125,7 +127,7 @@ export default function PaymentMethodOptions() {
         }
     }
 
-    function handlePaymentDetailsValidation() {
+    function saveCard() {
         const paymentMethodOption = selectedPaymentMethod;
         const formattedPaymentDetails = {
             fields: []
@@ -138,7 +140,6 @@ export default function PaymentMethodOptions() {
             }
             currentIndex++;
         }
-        
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
             token: process.env.REACT_APP_CLIENT_USERNAME,
@@ -148,15 +149,13 @@ export default function PaymentMethodOptions() {
             locale: ''
         });
 
-        // invoke validateFields methods for validating user input payment details
-        inaiInstance.validateFields(paymentMethodOption, formattedPaymentDetails)
-        .then(data => {
+        // invoke payment
+        inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
+        .then((data) => {
             alert(JSON.stringify(data));
-            if (data.valid) {
-                navigate('/headless-checkout-options');
-            }
+            navigate('/headless-checkout-options');
         })
-        .catch(err => {
+        .catch((err) => {
             alert(JSON.stringify(err));
         })
     }
@@ -203,6 +202,12 @@ export default function PaymentMethodOptions() {
                                                 <input type={(field.field_type === 'textfield') ? 'text' : field.field_type} id={field.name} placeholder={field.placeholder} className={`input-entry ${!paymentDetails[field.name].value.length || paymentDetails[field.name].isValidated ? '' : 'invalid-entry'}`} value={paymentDetails[field.name].value} onChange={(e) => handleChange(e, field)} />
                                             </div>
                                         ))}
+                                        {(option.rail_code === 'card') && (
+                                            <div className="field flex align-items-center gap-5">
+                                                <input type="checkbox" id='save_card' onChange={handleChange} />
+                                                <label htmlFor="save_card">Save card</label>
+                                            </div>
+                                        )}
                                     </div>
                                 ) : null}
                                 {((selectedPaymentMethod === option.rail_code) && !option.form_fields.length) ? (
@@ -211,7 +216,7 @@ export default function PaymentMethodOptions() {
                             </div>
                         ))
                     }
-                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handlePaymentDetailsValidation}>VALIDATE FIELDS</div>
+                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={saveCard}>SAVE CARD</div>
                 </div>
             ) : null}
         </div>

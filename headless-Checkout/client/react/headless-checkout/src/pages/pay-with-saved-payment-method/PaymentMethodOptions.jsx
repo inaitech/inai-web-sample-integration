@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function PaymentMethodOptions() {
     const createOrderUrl = 'http://localhost:5009/v1/orders';
     let paymentMethodOptionsUrl = 'http://localhost:5009/v1/payment-method-options';
-    const savedPaymentMethod = false;
+    const savedPaymentMethod = true;
     const country = "<country>"; // An ISO 3166-1 alpha-3 country code
     const externalId = "<external_id>" // merchant's representation of a customer
     const amount = "<amount>"; // The amount of money, either a whole number or a number with up to 3 decimal places.
@@ -13,11 +13,13 @@ export default function PaymentMethodOptions() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [paymentMethodOptions, setPaymentMethodOptions] = useState([]);
-    const shouldRenderPaymentMethodOptions = !error && !loading && paymentMethodOptions.length;
+    const [paymentMethodOptionsObj, setPaymentMethodOptionsObj] = useState({});
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+    const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null);
     const [paymentDetails, setPaymentDetails] = useState({});
     const [orderId, setOrderId] = useState('');
+    const [customerSavedPaymentMethods, setCustomerSavedPaymentMethods] = useState([]);
+    const shouldRendercustomerSavedPaymentMethods = !error && !loading && customerSavedPaymentMethods.length;
 
     const getPaymentMethods = async () => {
         try{
@@ -37,30 +39,43 @@ export default function PaymentMethodOptions() {
                 })
             });
             const orderResponseData = await orderResponse.json();
+            setLoading(false);
             if (orderResponse.status !== 201) {
                 // order creation unsuccessful!
-                setLoading(false);
                 setError(JSON.stringify(orderResponseData));
                 return;
             }
             setOrderId(orderResponseData.id);
 
-            // get payment method options // order creation successful
+            // order creation successful // now get customer's saved payment methods and render them 
+            const customerSavedPaymentMethodsUrl = `http://localhost:5009/v1/customers/${orderResponseData.customer_id}/payment-methods`;
+            const customerSavedPaymentMethodsRes = await fetch(customerSavedPaymentMethodsUrl);
+            const customerSavedPaymentMethodsResData = await customerSavedPaymentMethodsRes.json();
+            setCustomerSavedPaymentMethods(customerSavedPaymentMethodsResData.payment_methods);
+
+            // get payment method options with saved_payment_method set to true (to display fields to be filled by customer when any saved payment method option is selected for payment)
             const newPaymentMethodOptionsUrl = paymentMethodOptionsUrl + `?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
             const paymentMethodOptionsResponse = await fetch(newPaymentMethodOptionsUrl);
             const paymentMethodOptionsResponseData = await paymentMethodOptionsResponse.json();
+            setLoading(false);
             if (paymentMethodOptionsResponse.status !== 200) {
-                setLoading(false);
                 setError(JSON.stringify(paymentMethodOptionsResponseData));
                 return;
             }
 
-            // now render payment method options
-            setLoading(false);
-            setPaymentMethodOptions([...paymentMethodOptionsResponseData.payment_method_options]);
+            // update states
+            setPaymentMethodOptionsObj(createPaymentMethodOptionsObj(paymentMethodOptionsResponseData.payment_method_options));
         } catch(err) {
-            setError(JSON.stringify(err));
+            setError(err.message);
         }
+    }
+
+    const createPaymentMethodOptionsObj = (paymentMethodOptions) => {
+        const obj = {};
+        for (let option of paymentMethodOptions) {
+            obj[option.rail_code] = option;
+        }
+        return obj;
     }
 
     function createInitialPaymentDetails(fields) {
@@ -125,10 +140,11 @@ export default function PaymentMethodOptions() {
         }
     }
 
-    function handlePaymentDetailsValidation() {
-        const paymentMethodOption = selectedPaymentMethod;
+    function handleCheckout() {
+        const paymentMethodOption = selectedPaymentMethod || 'card';
         const formattedPaymentDetails = {
-            fields: []
+            fields: [],
+            paymentMethodId: selectedPaymentMethodId
         };
         let currentIndex = 0;
         for(let key in paymentDetails){
@@ -138,6 +154,7 @@ export default function PaymentMethodOptions() {
             }
             currentIndex++;
         }
+
         
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
@@ -148,13 +165,11 @@ export default function PaymentMethodOptions() {
             locale: ''
         });
 
-        // invoke validateFields methods for validating user input payment details
-        inaiInstance.validateFields(paymentMethodOption, formattedPaymentDetails)
+        // invoke payment
+        inaiInstance.makePayment(paymentMethodOption, formattedPaymentDetails)
         .then(data => {
             alert(JSON.stringify(data));
-            if (data.valid) {
-                navigate('/headless-checkout-options');
-            }
+            navigate('/headless-checkout-options');
         })
         .catch(err => {
             alert(JSON.stringify(err));
@@ -174,27 +189,30 @@ export default function PaymentMethodOptions() {
             {error ? (
                 <div className="container w-20 text-align-center">{error}</div>
             ) : null}
-            {shouldRenderPaymentMethodOptions ? (
+            {shouldRendercustomerSavedPaymentMethods ? (
                 <div className="container w-20 flex flex-column gap-10">
                     {
-                        paymentMethodOptions.map((option, i) => (
+                        customerSavedPaymentMethods.map((paymentMethod, i) => (
                             <div className="flex flex-column gap-10">
-                                <div key={`payment-method-${i}`} id={option.rail_code} className="btn btn-1" onClick={() => {
-                                    if (selectedPaymentMethod === option.rail_code) {
+                                <div key={`payment-method-${i}`} id={paymentMethod.id} className="btn btn-1" onClick={() => {
+                                    if (selectedPaymentMethodId === paymentMethod.id) {
                                         setSelectedPaymentMethod(null);
+                                        setSelectedPaymentMethodId(null);
                                         setPaymentDetails({});
                                     } else {
-                                        setSelectedPaymentMethod(option.rail_code);
-                                        // create new payment details as per payment method fields
-                                        const newPaymentDetails = createInitialPaymentDetails(option.form_fields);
-                                        setPaymentDetails({...newPaymentDetails}); // update as per newly selected payment method
+                                        setSelectedPaymentMethod(paymentMethod.type);
+                                        setSelectedPaymentMethodId(paymentMethod.id);
+                                        // create new payment details as per selected saved payment method
+                                        // console.log('form_fields', paymentMethodOptionsObj);
+                                        const newPaymentDetails = createInitialPaymentDetails(paymentMethodOptionsObj[paymentMethod.type].form_fields);
+                                        setPaymentDetails({...newPaymentDetails}); // updates as per newly selected payment method option
                                     }
                                 }} >
-                                    {option.rail_code}
+                                    {`${paymentMethod.type} ${paymentMethod[paymentMethod.type].brand} ${paymentMethod[paymentMethod.type].last_4}`}
                                 </div>
-                                {(selectedPaymentMethod === option.rail_code) && option.form_fields.length ? (
+                                {(selectedPaymentMethodId === paymentMethod.id) && paymentMethodOptionsObj[paymentMethod.type].form_fields.length ? (
                                     <div className="flex flex-column gap-10 my-15">
-                                        {option.form_fields.map((field, index) => (
+                                        {paymentMethodOptionsObj[paymentMethod.type].form_fields.map((field, index) => (
                                             <div key={`field-${index}`} className="field flex flex-column gap-5">
                                                 <label htmlFor={field.name}>
                                                     <span className="font-weight-bold">{field.label}</span>
@@ -205,13 +223,13 @@ export default function PaymentMethodOptions() {
                                         ))}
                                     </div>
                                 ) : null}
-                                {((selectedPaymentMethod === option.rail_code) && !option.form_fields.length) ? (
+                                {((selectedPaymentMethodId === paymentMethod.id) && !paymentMethodOptionsObj[paymentMethod.type].form_fields.length) ? (
                                     <div className="text-align-center my-15">No fields to display!</div>
                                 ) : null}
                             </div>
                         ))
                     }
-                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handlePaymentDetailsValidation}>VALIDATE FIELDS</div>
+                    <div className="btn btn-1 btn-bg-color-1 border-radius-1 my-3" onClick={handleCheckout}>CHECKOUT</div>
                 </div>
             ) : null}
         </div>
