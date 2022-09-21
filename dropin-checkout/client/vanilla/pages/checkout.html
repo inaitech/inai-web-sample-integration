@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="../index.css">
+    <script src="https://assets.inai.io/checkout/v1/inai.js" type="text/javascript" defer></script>
+</head>
+<body>
+    <div id="inai-widget" class="outer-container"></div>
+</body>
+</html>
+<script>
+    const backend_url = 'http://localhost:5999/v1/orders'; // port number should be updated as per port on which backend server is running
+
+    const handleCheckout = async () => {
+        try{
+            const res = await fetch(backend_url, {
+                method: 'POST', 
+                headers: {
+                    Accept: 'application/json', 
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customer: {
+                        external_id: "< merchant's representation of customer >" // should be updated
+                    }
+                })
+            });
+
+            const res_data = await res.json();
+
+            if(res.status !== 201){
+                // order creation unsuccessful...
+                alert(JSON.stringify(res_data));
+                window.location.href = '/vanilla/pages/product.html';
+            }
+
+            // order created successfully // now initialise inai dropin checkout
+            const response = await inai.initialize({
+                containerId: "inai-widget",
+                token: "< inai client username >", // should be updated 
+                orderId: res_data.id,
+                styles: {
+                    container: {},
+                    cta: {}, 
+                    errorText: {}
+                },
+                ctaText: "Pay Now"
+            });
+
+            // payment successful
+            alert(JSON.stringify(response));
+            window.location.href = '/vanilla/index.html';
+        } catch(err){
+            alert(JSON.stringify(err));
+            window.location.href = '/vanilla/pages/product.html';
+        }
+    };
+
+    handleCheckout();
+</script>
