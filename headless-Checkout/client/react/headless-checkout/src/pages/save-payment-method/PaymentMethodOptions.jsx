@@ -7,6 +7,8 @@ export default function PaymentMethodOptions() {
     const savedPaymentMethod = false;
     const country = "<country>";
     const externalId = "<external_id>" // merchant's representation of a customer
+    const amount = "<amount>"; // The amount of money, either a whole number or a number with up to 3 decimal places.
+    const currency = "<currency>"; // An ISO 4217 alpha currency code.
 
     const navigate = useNavigate();
 
@@ -28,6 +30,8 @@ export default function PaymentMethodOptions() {
                     'Content-Type': 'application/json',
                 },
                 body : JSON.stringify({
+                    amount,
+                    currency,
                     customer: {
                         external_id: externalId // merchant's representation of a customer
                     }, 
