@@ -1,8 +1,7 @@
 const serverUrl = "http://localhost:5999";
-//replace token with client id
 const token = "<token>";
 const country = "<country>";
-const externalCustomerId = "<externalCustomerId>";
+const externalId = "<externalId>";
 const currency = "<currency>";
 const amount = "<amount>";
 
@@ -30,7 +29,7 @@ const processCheckout = () => {
             amount,
             currency,
             customer: {
-                external_id: externalCustomerId
+                external_id: externalId
             }
         })
     };
@@ -42,8 +41,13 @@ const processCheckout = () => {
                 .then((response) => response.json())
                 .then((paymentData) => {
                     paymentContainer.classList.remove('hide');
-                    checkoutContainer.classList.remove('hide');
                     let paymentOptions = (paymentData.payment_method_options);
+
+                    let inaiInstance = window.inai.create({
+                        token: token,
+                        orderId: orderId,
+                        countryCode: country,
+                    });
 
                     // holds state of currently chosen payment
                     let selectedPaymentMethodOption = null;
@@ -112,7 +116,7 @@ const processCheckout = () => {
                         const rail = option.rail_code;
                         const fields = option.form_fields;
                         const railContainer = createElement('div', rail);
-                        const railButton = createElement('button', `${rail}-button`);
+                        const railButton = createElement('button', `${rail}-payment`);
                         railButton.classList.add('payment-method-button');
                         const logoElem = createElement('span');
                         logoElem.innerText = rail;
@@ -186,16 +190,10 @@ const processCheckout = () => {
 
                     const checkoutBtn = createElement('button', 'checkout-cta');
                     checkoutBtn.innerText = 'Checkout';
-                    document.getElementById('checkout-button-container').appendChild(checkoutBtn);
+                    document.getElementById('payment-methods-container').appendChild(checkoutBtn);
 
                     // on click listener for checkout button
                     checkoutBtn.onclick = () => {
-                        let inaiInstance = window.inai.create({
-                            token: token,
-                            orderId: orderId,
-                            countryCode: country,
-                        });
-
                         const fieldsArray = []
                         const paymentMethodFieldsContainer = document.querySelectorAll(`[data-rail-fields=${selectedPaymentMethodOption}]`)[0];
                         const paymentInputs = paymentMethodFieldsContainer.getElementsByClassName('payment-input');

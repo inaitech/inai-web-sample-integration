@@ -7,7 +7,7 @@ export default function Product() {
     const navigate = useNavigate();
 
     function handleClick() {
-        navigate(`/make-payment/payment-method-options`);
+        navigate(`/make-payment/checkout`);
     }
 
     return (
