@@ -3,6 +3,6 @@ import App from './App';
 
 test('renders learn react link', () => {
   render(<App />);
-  const linkElement = screen.getByText(/headless-checkout/i);
+  const linkElement = screen.getByText(/HEADLESS CHECKOUT/i);
   expect(linkElement).toBeInTheDocument();
 });
