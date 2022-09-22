@@ -51,7 +51,7 @@ export default function SavePaymentMethod() {
             }
             setOrderId(orderResponseData.id);
 
-            // order creation successful // get payment method options
+            // get payment method options
             const paymentMethodOptionsUrl = `${backendHost}/v1/payment-method-options?country=${country}&order_id=${orderResponseData.id}`;
             const paymentMethodOptionsResponse = await fetch(paymentMethodOptionsUrl);
             const paymentMethodOptionsResponseData = await paymentMethodOptionsResponse.json();
@@ -61,7 +61,6 @@ export default function SavePaymentMethod() {
                 return;
             }
 
-            // now render payment method options
             setLoading(false);
             setPaymentMethodOptions([...paymentMethodOptionsResponseData.payment_method_options]);
         } catch(err) {
@@ -187,7 +186,7 @@ export default function SavePaymentMethod() {
                                         setSelectedPaymentMethod(option.rail_code);
                                         // create new payment details as per payment method fields
                                         const newPaymentDetails = createInitialPaymentDetails(option.form_fields);
-                                        setPaymentDetails({...newPaymentDetails}); // update as per newly selected payment method
+                                        setPaymentDetails({...newPaymentDetails});
                                     }
                                 }} >
                                     {option.rail_code}
