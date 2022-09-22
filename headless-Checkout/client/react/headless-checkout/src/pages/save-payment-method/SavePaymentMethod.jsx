@@ -160,6 +160,18 @@ export default function SavePaymentMethod() {
         })
     }
 
+    function togglePaymentMethodFields(option) {
+        if (selectedPaymentMethod === option.rail_code) {
+            setSelectedPaymentMethod(null);
+            setPaymentDetails({});
+        } else {
+            setSelectedPaymentMethod(option.rail_code);
+            // create new payment details as per payment method fields
+            const newPaymentDetails = createInitialPaymentDetails(option.form_fields);
+            setPaymentDetails({...newPaymentDetails});
+        }
+    }
+
     useEffect(() => {
         getPaymentMethods();
     }, []);
@@ -178,17 +190,7 @@ export default function SavePaymentMethod() {
                     {
                         paymentMethodOptions.map((option, i) => (
                             <div className="flex flex-column gap-10">
-                                <div key={`payment-method-${i}`} id={option.rail_code} className="btn btn-1" onClick={() => {
-                                    if (selectedPaymentMethod === option.rail_code) {
-                                        setSelectedPaymentMethod(null);
-                                        setPaymentDetails({});
-                                    } else {
-                                        setSelectedPaymentMethod(option.rail_code);
-                                        // create new payment details as per payment method fields
-                                        const newPaymentDetails = createInitialPaymentDetails(option.form_fields);
-                                        setPaymentDetails({...newPaymentDetails});
-                                    }
-                                }} >
+                                <div key={`payment-method-${i}`} id={option.rail_code} className="btn btn-1" onClick={() => togglePaymentMethodFields(option)} >
                                     {option.rail_code}
                                 </div>
                                 {(selectedPaymentMethod === option.rail_code) ? (option.form_fields.length && (
