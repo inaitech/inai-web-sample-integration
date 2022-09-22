@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function PaymentMethodOptions() {
-    const createOrderUrl = 'http://localhost:5009/v1/orders';
-    let paymentMethodOptionsUrl = 'http://localhost:5009/v1/payment-method-options';
+export default function Checkout() {
+    const backendHost = 'http://localhost:5999';
     const savedPaymentMethod = false;
-    const country = "<country>";
-    const externalId = "<external_id>" // merchant's representation of a customer
+    // An ISO 3166-1 alpha-3 country code
+    const country = "<country_code>";
+    // merchant's representation of a customer
+    const externalId = "<external_id>";
+    // The amount of money, either a whole number or a number with up to 3 decimal places.
+    const amount = "<amount>";
+    // An ISO 4217 alpha currency code.
+    const currency = "<currency_code>";
 
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -20,15 +25,17 @@ export default function PaymentMethodOptions() {
     const getPaymentMethods = async () => {
         try{
             // create order
-            const orderResponse = await fetch(createOrderUrl, {
+            const orderResponse = await fetch(`${backendHost}/v1/orders`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json', 
                     'Content-Type': 'application/json',
                 },
                 body : JSON.stringify({
+                    amount, 
+                    currency, 
                     customer: {
-                        external_id: externalId // merchant's representation of a customer
+                        external_id: externalId
                     }
                 })
             });
@@ -41,9 +48,9 @@ export default function PaymentMethodOptions() {
             }
             setOrderId(orderResponseData.id);
 
-            // get payment method options // order creation successful
-            const newPaymentMethodOptionsUrl = paymentMethodOptionsUrl + `?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
-            const paymentMethodOptionsResponse = await fetch(newPaymentMethodOptionsUrl);
+            // get payment method options
+            const paymentMethodOptionsUrl = `${backendHost}/v1/payment-method-options?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
+            const paymentMethodOptionsResponse = await fetch(paymentMethodOptionsUrl);
             const paymentMethodOptionsResponseData = await paymentMethodOptionsResponse.json();
             if (paymentMethodOptionsResponse.status !== 200) {
                 setLoading(false);
@@ -51,7 +58,6 @@ export default function PaymentMethodOptions() {
                 return;
             }
 
-            // now render payment method options
             setLoading(false);
             setPaymentMethodOptions([...paymentMethodOptionsResponseData.payment_method_options]);
         } catch(err) {
@@ -103,8 +109,7 @@ export default function PaymentMethodOptions() {
     }
 
     function handleChange(e, field) {
-        if(e.target.id === 'save_card')
-        {
+        if (e.target.id === 'save_card') {
             setPaymentDetails({...paymentDetails, [e.target.id] : {value: e.target.checked}});
         } else {
             let fieldAfterValueUpdate;
