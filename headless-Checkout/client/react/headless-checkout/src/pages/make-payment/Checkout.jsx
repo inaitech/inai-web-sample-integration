@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
     const backendHost = 'http://localhost:5999';
-    const savedPaymentMethod = false;
     // An ISO 3166-1 alpha-3 country code
     const country = "<country_code>";
     // merchant's representation of a customer
@@ -49,7 +48,7 @@ export default function Checkout() {
             setOrderId(orderResponseData.id);
 
             // get payment method options
-            const paymentMethodOptionsUrl = `${backendHost}/v1/payment-method-options?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
+            const paymentMethodOptionsUrl = `${backendHost}/v1/payment-method-options?country=${country}&order_id=${orderResponseData.id}`;
             const paymentMethodOptionsResponse = await fetch(paymentMethodOptionsUrl);
             const paymentMethodOptionsResponseData = await paymentMethodOptionsResponse.json();
             if (paymentMethodOptionsResponse.status !== 200) {
@@ -144,9 +143,7 @@ export default function Checkout() {
         const inaiInstance = window.inai.create({
             token: process.env.REACT_APP_CLIENT_USERNAME,
             orderId: orderId,
-            countryCode: country,
-            redirectUrl: '',
-            locale: ''
+            countryCode: country
         });
 
         // invoke payment
