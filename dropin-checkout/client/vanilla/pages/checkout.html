@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout</title>
+    <title>Drop-in Checkout</title>
     <link rel="stylesheet" href="../index.css">
     <script src="https://assets.inai.io/checkout/v1/inai.js" type="text/javascript" defer></script>
 </head>
@@ -13,36 +13,45 @@
 </body>
 </html>
 <script>
-    const backend_url = 'http://localhost:5999/v1/orders'; // port number should be updated as per port on which backend server is running
+    // order request
+    const ordersUrl = 'http://localhost:5999/v1/orders';
+    const amount = "<amount>";
+    const currency = "<currency>";
+    const externalId = "<external_id>"
+
+    // inai checkout initialization token
+    const token = "<client_username>";
 
     const handleCheckout = async () => {
         try{
-            const res = await fetch(backend_url, {
+            const orderResponse = await fetch(ordersUrl, {
                 method: 'POST', 
                 headers: {
                     Accept: 'application/json', 
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    amount,
+                    currency,
                     customer: {
-                        external_id: "< merchant's representation of customer >" // should be updated
+                        external_id: externalId
                     }
                 })
             });
 
-            const res_data = await res.json();
+            const orderDetails = await orderResponse.json();
 
-            if(res.status !== 201){
-                // order creation unsuccessful...
-                alert(JSON.stringify(res_data));
-                window.location.href = '/vanilla/pages/product.html';
+            if(orderResponse.status !== 201){
+                // order creation failed
+                alert(JSON.stringify(orderDetails));
+                window.location.href = '/pages/product.html';
             }
 
-            // order created successfully // now initialise inai dropin checkout
+            // initialize drop-in checkout
             const response = await inai.initialize({
                 containerId: "inai-widget",
-                token: "< inai client username >", // should be updated 
-                orderId: res_data.id,
+                token, 
+                orderId: orderDetails.id,
                 styles: {
                     container: {},
                     cta: {}, 
@@ -53,10 +62,11 @@
 
             // payment successful
             alert(JSON.stringify(response));
-            window.location.href = '/vanilla/index.html';
+            window.location.href = '/index.html';
         } catch(err){
+            // payment failed
             alert(JSON.stringify(err));
-            window.location.href = '/vanilla/pages/product.html';
+            window.location.href = '/pages/product.html';
         }
     };
 
