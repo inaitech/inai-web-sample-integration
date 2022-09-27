@@ -4,14 +4,6 @@ body {
   box-sizing: border-box;
 }
 
-.dropin-container {
-  /* position: absolute; */
-  height: 100%;
-  top: 50%;
-  left: 45%;
-  right: 45%;
-}
-
 .dropin {
   width: 320px;
   height: 30px;
