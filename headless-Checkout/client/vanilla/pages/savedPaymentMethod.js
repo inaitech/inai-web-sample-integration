@@ -1,12 +1,21 @@
-//local-server url and token
-//replace this url with your local-server url
-const server = "http://localhost:8080";
-//replace token with client id
-const token = "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS";
-const country = "USA";
+const serverUrl = "http://localhost:5999";
+const token = "<token>";
+const country = "<country>";
+const customerId = "<customerId>";
+const currency = "<currency>";
+const amount = "<amount>";
+
+// utility to create a HTML DOM element
+const createElement = (tag, id) => {
+  const elem = document.createElement(tag);
+  if (!!id) {
+    elem.id = id;
+  }
+  return elem;
+};
 
 function DisplaysavedPaymentMethods() {
-  fetch(`${server}/saved`)
+  fetch(`${serverUrl}/v1/customers/${customerId}/payment-methods`)
     .then((response) => response.json())
     .then((data) => {
       let savedMethods = (data.payment_methods)
@@ -34,34 +43,33 @@ function DisplaysavedPaymentMethods() {
         }
       })
       function savedPayment(paymentId) {
-        const url = `${server}/checkout`;
+        const url = `${serverUrl}/v1/orders`;
         const options = {
           method: "POST",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
           },
+          body: JSON.stringify({
+            amount,
+            currency,
+            customer: {
+              id: customerId
+            }
+          })
         };
         fetch(url, options)
           .then((response) => response.json())
-          .then((res_data) => {
-            let order_id = (res_data.id);
-            fetch(`${server}/saved_payment-method-options?country=${country}&saved_payment_method=true&order_id=${order_id}`)
+          .then((data) => {
+            let orderId = (data.id);
+            fetch(`${serverUrl}/v1/payment-method-options?country=${country}&saved_payment_method=true&order_id=${orderId}`)
               .then((response) => response.json())
-              .then((pay_data) => {
-                let paymentOptions = (pay_data.payment_method_options);
+              .then((paymentData) => {
+                let paymentOptions = (paymentData.payment_method_options);
                 // holds state of currently chosen payment
                 let selectedPaymentMethodOption = null;
-                // utility to create a HTML DOM element
-                const createElement = (tag, id) => {
-                  const elem = document.createElement(tag);
-                  if (!!id) {
-                    elem.id = id;
-                  }
-                  return elem;
-                };
+
                 // toggle method that toggles the payment method fields when 
-                // a payment method option button is clicked
                 const togglePaymentMethodFormFields = (fieldsContainer) => {
                   fieldsContainer.style.height = fieldsContainer.style.height === 'auto' ? '0px' : 'auto';
                   fieldsContainer.style.overflow = fieldsContainer.style.overflow === 'auto' ? 'hidden' : 'auto';
@@ -69,11 +77,11 @@ function DisplaysavedPaymentMethods() {
                 // resets previously chosen payment method's selection state
                 const resetPaymentMethodSelection = () => {
                   const selectedPaymentMethods = document.getElementsByClassName('selected');
-                  for (selectedPaymentMethod of selectedPaymentMethods) {
+                  for (let selectedPaymentMethod of selectedPaymentMethods) {
                     selectedPaymentMethod.classList.remove('selected');
                   }
                   const selectedFieldContainers = document.getElementsByClassName('toggle-transition');
-                  for (selectedFieldContainer of selectedFieldContainers) {
+                  for (let selectedFieldContainer of selectedFieldContainers) {
                     selectedFieldContainer.style.height = '0px';
                     selectedFieldContainer.style.overflow = 'hidden';
                   }
@@ -94,16 +102,18 @@ function DisplaysavedPaymentMethods() {
                       console.error(error);
                     })
                 }
+
                 paymentOptions.forEach(option => {
                   const rail = option.rail_code;
                   const fields = option.form_fields;
                   const railContainer = createElement('div', rail);
-                  const railButton = createElement('button', `${rail}-button`);
-                  railButton.classList.add('payment-method-button')
-                  const logoElem = createElement('img', `${rail}-logo`)
-                  logoElem.src = `../assets/images/${rail}.svg`;
+                  const railButton = createElement('button', `${rail}-payment`);
+                  railButton.classList.add('payment-method-button');
+                  const logoElem = createElement('span');
+                  logoElem.innerText = rail;
                   railButton.appendChild(logoElem)
                   railContainer.appendChild(railButton);
+
                   const fieldsContainer = createElement('div', `${rail}-fields-container`);
                   fieldsContainer.setAttribute('data-rail-fields', rail)
                   fieldsContainer.classList.add('toggle-transition')
@@ -113,16 +123,29 @@ function DisplaysavedPaymentMethods() {
                     railButton.classList.add('selected');
                     togglePaymentMethodFormFields(fieldsContainer);
                   }
-                  // adds payment method options
+
+                  // adds payment method option related form fields to the DOM
                   fields.forEach(field => {
                     const fieldName = field.name;
+                    const validations = field.validations;
                     const fieldType = field.field_type;
                     const isRequired = field.required;
+
                     const labelField = createElement('label', fieldName);
                     const labelText = createElement('span');
                     labelText.innerText = field.label;
                     const fieldInput = createElement('input', fieldName);
+                    fieldInput.classList.add(`${rail}_${fieldName}`);
                     fieldInput.oninput = (event) => {
+                      const input_box = document.getElementsByClassName(`${rail}_${fieldName}`)[0];
+                      if (!validateField(event.target.value, validations)) {
+                        input_box.classList.add('invalid');
+                        input_box.classList.remove('valid');
+                      }
+                      else {
+                        input_box.classList.add('valid');
+                        input_box.classList.remove('invalid');
+                      }
                       if (fieldName === "expiry") {
                         if (String(event.target.value).length === 2) {
                           event.target.value += "/"
@@ -137,8 +160,6 @@ function DisplaysavedPaymentMethods() {
                     fieldInput.classList.add('payment-input');
                     fieldInput.setAttribute('data-name', fieldName);
 
-                    // if field is a required field,
-                    // adds styles for adding asterisk
                     if (isRequired) {
                       labelText.classList.add('required')
                     }
@@ -157,26 +178,25 @@ function DisplaysavedPaymentMethods() {
                   railContainer.appendChild(fieldsContainer);
                   document.getElementById('payment-methods-container').appendChild(railContainer);
                 })
-                // renders payment method options and the associated fields
 
                 const checkoutBtn = createElement('button', 'checkout-cta');
                 checkoutBtn.innerText = 'Checkout';
-                document.getElementById('checkout-button-container').appendChild(checkoutBtn);
+                document.getElementById('payment-methods-container').appendChild(checkoutBtn);
 
                 // on click listener for checkout button
                 checkoutBtn.onclick = () => {
                   let inaiInstance = window.inai.create({
                     token: token,
-                    orderId: order_id,
+                    orderId: orderId,
                     countryCode: country,
                   });
                   const fieldsArray = []
                   const paymentMethodFieldsContainer = document.querySelectorAll(`[data-rail-fields=${selectedPaymentMethodOption}]`)[0];
                   const paymentInputs = paymentMethodFieldsContainer.getElementsByClassName('payment-input');
-                  for (paymentInput of paymentInputs) {
+                  for (let paymentInput of paymentInputs) {
                     const formInputDetails = {
                       name: paymentInput.getAttribute("data-name"),
-                      value: paymentInput.value
+                      value: isCheckbox ? paymentInput.checked : paymentInput.value
                     }
                     fieldsArray.push(formInputDetails)
                   }
