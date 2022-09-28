@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { clientUserName, backendHost, country, externalId, amount, currency } from "../../helpers/constants";
 
-export default function PaymentMethodOptions() {
-    const createOrderUrl = 'http://localhost:5009/v1/orders';
-    let paymentMethodOptionsUrl = 'http://localhost:5009/v1/payment-method-options';
+export default function Checkout() {
     const savedPaymentMethod = true;
-    const country = "<country>"; // An ISO 3166-1 alpha-3 country code
-    const externalId = "<external_id>" // merchant's representation of a customer
-    const amount = "<amount>"; // The amount of money, either a whole number or a number with up to 3 decimal places.
-    const currency = "<currency>"; // An ISO 4217 alpha currency code.
-
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -24,7 +18,7 @@ export default function PaymentMethodOptions() {
     const getPaymentMethods = async () => {
         try{
             // create order
-            const orderResponse = await fetch(createOrderUrl, {
+            const orderResponse = await fetch(`${backendHost}/v1/orders`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json', 
@@ -48,14 +42,14 @@ export default function PaymentMethodOptions() {
             setOrderId(orderResponseData.id);
 
             // order creation successful // now get customer's saved payment methods and render them 
-            const customerSavedPaymentMethodsUrl = `http://localhost:5009/v1/customers/${orderResponseData.customer_id}/payment-methods`;
+            const customerSavedPaymentMethodsUrl = `${backendHost}/v1/customers/${orderResponseData.customer_id}/payment-methods`;
             const customerSavedPaymentMethodsRes = await fetch(customerSavedPaymentMethodsUrl);
             const customerSavedPaymentMethodsResData = await customerSavedPaymentMethodsRes.json();
             setCustomerSavedPaymentMethods(customerSavedPaymentMethodsResData.payment_methods);
 
             // get payment method options with saved_payment_method set to true (to display fields to be filled by customer when any saved payment method option is selected for payment)
-            const newPaymentMethodOptionsUrl = paymentMethodOptionsUrl + `?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
-            const paymentMethodOptionsResponse = await fetch(newPaymentMethodOptionsUrl);
+            const paymentMethodOptionsUrl = `${backendHost}/v1/payment-method-options?country=${country}&saved_payment_method=${savedPaymentMethod}&order_id=${orderResponseData.id}`;
+            const paymentMethodOptionsResponse = await fetch(paymentMethodOptionsUrl);
             const paymentMethodOptionsResponseData = await paymentMethodOptionsResponse.json();
             setLoading(false);
             if (paymentMethodOptionsResponse.status !== 200) {
@@ -158,7 +152,7 @@ export default function PaymentMethodOptions() {
         
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
-            token: process.env.REACT_APP_CLIENT_USERNAME,
+            token: clientUserName,
             orderId: orderId,
             countryCode: country,
             redirectUrl: '',
@@ -203,9 +197,9 @@ export default function PaymentMethodOptions() {
                                         setSelectedPaymentMethod(paymentMethod.type);
                                         setSelectedPaymentMethodId(paymentMethod.id);
                                         // create new payment details as per selected saved payment method
-                                        // console.log('form_fields', paymentMethodOptionsObj);
                                         const newPaymentDetails = createInitialPaymentDetails(paymentMethodOptionsObj[paymentMethod.type].form_fields);
-                                        setPaymentDetails({...newPaymentDetails}); // updates as per newly selected payment method option
+                                        // updates as per newly selected payment method option
+                                        setPaymentDetails({...newPaymentDetails});
                                     }
                                 }} >
                                     {`${paymentMethod.type} ${paymentMethod[paymentMethod.type].brand} ${paymentMethod[paymentMethod.type].last_4}`}
