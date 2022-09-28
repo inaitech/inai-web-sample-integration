@@ -1,9 +1,9 @@
-//local-server url and token
-//replace this url with your local-server url
-const server = "http://localhost:8080";
-//replace token with client id
-const token = "sbx_ci_7kCbmGnJBYmC4TwUz1FA3FsWPnRKQG3gzCX4R87VDTsS";
-const country = "USA";
+const serverUrl = "http://localhost:5999";
+const token = "<token>";
+const country = "<country>";
+const externalId = "<externalId>";
+const currency = "<currency>";
+const amount = "<amount>";
 
 const createElement = (tag, id) => {
   const elem = document.createElement(tag);
@@ -14,7 +14,7 @@ const createElement = (tag, id) => {
 };
 
 function debounce(callback, delay) {
-  let timeout;
+  let timeout;  
   return function () {
     clearTimeout(timeout);
     timeout = setTimeout(callback, delay);
@@ -31,9 +31,20 @@ input_box.oninput = (e) => {
   }
 
   function cardInfo() {
-    const url = `${server}/create`;
+    const url = `${serverUrl}/v1/orders`;
     const options = {
       method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: JSON.stringify({
+        amount,
+        currency,
+        customer: {
+          external_id: externalId,
+        }
+      })
     };
     fetch(url, options)
       .then((response) => response.json())
