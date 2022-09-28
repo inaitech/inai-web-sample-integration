@@ -107,3 +107,15 @@
     border: none;
     border-bottom: 0.1px solid rgba(00, 00, 00, 0.3);
 }
+
+.btn-bg-color-1 {
+    background-color: #6e71cc;
+}
+
+.input-entry:focus {
+    border-bottom-color: cyan;
+}
+
+.invalid-entry {
+    border-bottom-color: red !important;
+}
