@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drop-in Checkout</title>
+    <link rel="stylesheet" href="../index.css">
+    <script src="https://assets.inai.io/checkout/v1/inai.js" type="text/javascript" defer></script>
+</head>
+<body>
+    <div id="inai-widget" class="outer-container"></div>
+</body>
+</html>
+<script>
+    // order request
+    const ordersUrl = 'http://localhost:5999/v1/orders';
+    const amount = "<amount>";
+    const currency = "<currency>";
+    const externalId = "<external_id>"
+
+    // inai checkout initialization token
+    const token = "<client_username>";
+
+    const handleCheckout = async () => {
+        try{
+            const orderResponse = await fetch(ordersUrl, {
+                method: 'POST', 
+                headers: {
+                    Accept: 'application/json', 
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount,
+                    currency,
+                    customer: {
+                        external_id: externalId
+                    }
+                })
+            });
+
+            const orderDetails = await orderResponse.json();
+
+            if(orderResponse.status !== 201){
+                // order creation failed
+                alert(JSON.stringify(orderDetails));
+                window.location.href = '/pages/product.html';
+            }
+
+            // initialize drop-in checkout
+            const response = await inai.initialize({
+                containerId: "inai-widget",
+                token, 
+                orderId: orderDetails.id,
+                styles: {
+                    container: {},
+                    cta: {}, 
+                    errorText: {}
+                },
+                ctaText: "Pay Now"
+            });
+
+            // payment successful
+            alert(JSON.stringify(response));
+            window.location.href = '/index.html';
+        } catch(err){
+            // payment failed
+            alert(JSON.stringify(err));
+            window.location.href = '/pages/product.html';
+        }
+    };
+
+    handleCheckout();
+</script>

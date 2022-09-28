@@ -1,15 +1,14 @@
 #homepage {
+  font-weight: 500;
   background-color: black;
   color: white;
   text-align: center;
-  font-size: xx-large;
-  height: 70px;
-  width: 500px;
-  padding-top: 2%;
+  font-size: 16px;
   cursor: pointer;
-  margin: auto;
   border-radius: 12px;
-  padding-top: 15px;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
 }
 
 a {
@@ -19,13 +18,13 @@ a {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  margin: 20;
+  margin: 12px 0;
   box-sizing: border-box;
 }
 
 label {
   display: block;
-  padding: 4px;
+  padding: 4px 0;
 }
 
 label input {
@@ -66,6 +65,10 @@ label span.required:after {
   font-size: 12px;
   cursor: pointer;
   font-weight: 600;
+  text-transform: capitalize;
+  -webkit-box-shadow: 3px 3px 10px -6px rgba(0,0,0,0.75);
+  -moz-box-shadow: 3px 3px 10px -6px rgba(0,0,0,0.75);
+  box-shadow: 3px 3px 10px -6px rgba(0,0,0,0.75);
 }
 
 .payment-method-button.selected {
@@ -80,16 +83,22 @@ label span.required:after {
   transition: height 1000ms ease-out;
   height: 0px;
   overflow: hidden;
+  margin: 0 12px;
 }
 
 #checkout-cta {
-  background-color: white;
-  color: #7154d4;
-  border: 1px solid #a2a2a2;
+  background-color: black;
+  color: white;
+  border: none;
   min-width: 320px;
-  padding: 8px;
+  padding: 12px;
   margin: 12px 0;
   font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
+  -moz-box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
+  box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
 }
 
 #payment-methods-container {
@@ -107,29 +116,12 @@ label span.required:after {
   box-shadow: 0px 0px 10px -5px rgba(74, 74, 74, 1);
 }
 
-#checkout-button-container {
-  position: fixed;
-  bottom: 0;
-  background-color: #7154d4;
-  width: 100%;
-  text-align: right;
-  padding: 0 12px;
-}
-
 .valid {
   border: 2px solid rgb(3, 196, 3) !important;
 }
 
 .invalid {
   border: 2px solid red !important;
-}
-
-#checkout-button-container #checkout-cta {
-  border: none;
-  border-radius: 5px;
-  border-radius: 5px;
-  margin: 12px 24px;
-  cursor: pointer;
 }
 
 .inai {
@@ -149,15 +141,18 @@ label span.required:after {
 }
 
 #btn {
-  height: 50px;
-  width: 200px;
-  font-size: 20px;
-  margin-left: 25%;
-  margin-top: 10%;
   background-color: black;
   color: white;
+  border: none;
+  min-width: 320px;
+  padding: 12px;
+  font-weight: 600;
   border-radius: 5px;
   cursor: pointer;
+  margin: 18px 20%;
+  -webkit-box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
+  -moz-box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
+  box-shadow: 6px 6px 10px -6px rgba(0,0,0,0.75);
 }
 
 .imgcontainer {
