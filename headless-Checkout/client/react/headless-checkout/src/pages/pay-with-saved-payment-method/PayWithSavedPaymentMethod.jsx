@@ -1,7 +1,14 @@
+import { Routes, Route } from 'react-router-dom';
+
+// pages
+import Checkout from './Checkout';
+
 export default function PayWithSavedPaymentMethod() {
     return (
         <div>
-            pay with saved payment method page
+            <Routes>
+                <Route path='/checkout' element={<Checkout />} />
+            </Routes>
         </div>
     );
 }

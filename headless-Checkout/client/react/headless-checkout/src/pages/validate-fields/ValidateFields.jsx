@@ -1,7 +1,9 @@
+import { Routes, Route } from 'react-router-dom';
+
 export default function ValidateFields() {
     return (
-        <div>
-            validate fields page
-        </div>
+        <Routes>
+            <Route path='/payment-methods' element={''} />
+        </Routes>
     );
 }
