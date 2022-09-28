@@ -58,3 +58,62 @@ body {
   width: 340px;
   margin: auto;
 }
+
+.icon-container {
+  width:fit-content;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.icon-cover {
+  color:white;
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
+.success-icon-cover {
+  background-color: #2DCE89;
+  border:10px solid #24A46D;
+}
+
+.failure-icon-cover {
+  background-color: #F75676;
+  border:10px solid #EC0C38;
+}
+
+.payent-success-text,
+.payment-failure-text {
+  width:fit-content;
+  margin: auto;
+  font-weight: 700;
+  font-size: 26px;
+  margin-top: 4vh;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center
+}
+
+.transaction-details {
+  width:fit-content;
+  margin: 0px auto 40px;
+  font-weight: 400;
+  font-size: 20px;
+  margin-top: 4vh;
+  color: grey;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+
+.order-greeting {
+  width: fit-content;
+  margin: auto;
+  font-weight: 400;
+  font-size: 16px;
+  margin-top: 4vh;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}

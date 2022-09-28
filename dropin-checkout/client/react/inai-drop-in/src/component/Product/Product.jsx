@@ -5,7 +5,7 @@ const Product = () => {
   const navigate = useNavigate();
 
   const handlePayment = () => {
-    navigate('/payment');
+    navigate('/checkout');
   }
   return (
     <div id="container">

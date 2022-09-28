@@ -1,7 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import DropIn from './component/Dropin';
-import Payment from './component/Payment';
+import Checkout from './component/Checkout';
 import Product from './component/Product';
+import SuccessPage from './component/SuccessPage';
+import FailurePage from './component/FailurePage';
 
 const App = () => {
   return (
@@ -9,7 +11,9 @@ const App = () => {
       <Routes>
         <Route exact path='/' element={<DropIn />} />
         <Route exact path='/product' element={<Product />} />
-        <Route exact path='/payment' element={<Payment />} />
+        <Route exact path='/checkout' element={<Checkout />} />
+        <Route exact path='/success' element={<SuccessPage />} />
+        <Route exact path='/failure' element={<FailurePage />} />
       </Routes>
     </BrowserRouter>
   );

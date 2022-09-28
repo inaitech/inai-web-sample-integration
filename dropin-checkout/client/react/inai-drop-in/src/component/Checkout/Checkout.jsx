@@ -1,26 +1,26 @@
 import React, { useEffect } from "react";
-import { country, failureRedirect, successRedirect } from "../../helpers/constants";
+import { country, token } from "../../helpers/constants";
 import { createOrder } from "../../helpers/utils";
 
-const Payment = () => {
+const Checkout = () => {
   useEffect(() => {
     createOrder()
       .then(res => {
         const { id: orderId } = res;
         const config = {
           containerId: "inai-widget",
-          token: process.env.REACT_APP_INAI_PAYMENT_TOKEN,
+          token: token,
           orderId,
           ctaText: "Pay Now",
           countryCode: country
         }
-        console.log('config = ', config);
         window.inai.initialize(config)
           .then(res => {
-            window.location.replace(successRedirect);
+            // payment success handler
+            console.log(`Transaction ID = ${res.transaction_id}`);
           })
           .catch(err => {
-            window.location.replace(failureRedirect);
+            // payment failure handler
             console.log('Inai Payment failed = ', err);
           })
       })
@@ -33,4 +33,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default Checkout;
