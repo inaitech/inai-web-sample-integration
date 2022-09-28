@@ -49,11 +49,11 @@ input_box.oninput = (e) => {
     fetch(url, options)
       .then((response) => response.json())
       .then((data) => {
-        let order_id = (data.id);
+        let orderId = (data.id);
         const card_number = document.getElementById("card_number").value;
         let inaiInstance = window.inai.create({
           token: token,
-          orderId: order_id,
+          orderId: orderId,
           countryCode: country,
         });
         inaiInstance.getCardInfo(card_number)
