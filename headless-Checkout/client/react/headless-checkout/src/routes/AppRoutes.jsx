@@ -15,9 +15,9 @@ export default function AppRoutes() {
             <Route path='/' element={<HeadlessCheckout />} />
             <Route path='/headless-checkout-options' element={<HeadlessCheckoutOptions />} />
             <Route path='/make-payment/*' element={<MakePayment />} />
-            <Route path='/save-payment-method/*' element={<SavePaymentMethod />} />
-            <Route path='/pay-with-saved-payment-method/*' element={<PayWithSavedPaymentMethod />} />
-            <Route path='/validate-fields/*' element={<ValidateFields />} />
+            <Route path='/save-payment-method' element={<SavePaymentMethod />} />
+            <Route path='/pay-with-saved-payment-method' element={<PayWithSavedPaymentMethod />} />
+            <Route path='/validate-fields' element={<ValidateFields />} />
             <Route path='/get-card-info' element={<GetCardInfo />} />
         </Routes>
     );
