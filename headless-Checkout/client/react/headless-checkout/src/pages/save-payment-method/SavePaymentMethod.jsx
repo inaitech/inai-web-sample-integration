@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { clientUserName, backendHost, country, externalId, amount, currency } from "../../helpers/constants";
 
 export default function SavePaymentMethod() {
-    const backendHost = 'http://localhost:5999';
-    // An ISO 3166-1 alpha-3 country code
-    const country = "<country_code>";
-    // merchant's representation of a customer
-    const externalId = "<external_id>";
-    // The amount of money, either a whole number or a number with up to 3 decimal places.
-    const amount = "<amount>";
-    // An ISO 4217 alpha currency code.
-    const currency = "<currency_code>";
     // set capture_method to MANUAL while creating order for saving the payment method without charging
     const captureMethod = 'MANUAL';
 
@@ -144,7 +136,7 @@ export default function SavePaymentMethod() {
         }
         // create new instance of inai checkout
         const inaiInstance = window.inai.create({
-            token: process.env.REACT_APP_CLIENT_USERNAME,
+            token: clientUserName,
             orderId: orderId,
             countryCode: country
         });
