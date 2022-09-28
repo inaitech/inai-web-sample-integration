@@ -1,7 +1,7 @@
 # inai Checkout
 
 ## Overview
-This repository demonstrates how to integrate inai’s Drop-in Checkout into your vanilla JS project.
+This repository demonstrates how to integrate inai’s Drop-in Checkout into your React JS project.
 
 ## Features
 ### Dropin Checkout
