@@ -173,14 +173,14 @@ const processCheckout = () => {
                                 labelText.classList.add('required')
                             }
 
-                            if (fieldType === "textfield") {
-                                labelField.appendChild(labelText);
-                                labelField.appendChild(fieldInput);
-                                fieldsContainer.appendChild(labelField);
-                            } else if (fieldType === "checkbox") {
+                            if (fieldType === "checkbox") {
                                 fieldInput.type = "checkbox";
                                 labelField.appendChild(fieldInput);
                                 labelField.appendChild(labelText);
+                                fieldsContainer.appendChild(labelField);
+                            } else {
+                                labelField.appendChild(labelText);
+                                labelField.appendChild(fieldInput);
                                 fieldsContainer.appendChild(labelField);
                             }
                         });
