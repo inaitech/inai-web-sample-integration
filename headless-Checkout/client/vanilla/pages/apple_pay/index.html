@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>Apple Pay Web - inai Headless Integration</title>
+    <script src="https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js"></script>
+    <script src="https://assets.inai-dev.com/checkout/v1/inai.js"></script>
+    <script src="./index.js"></script>
+    <style>
+      apple-pay-button {
+        --apple-pay-button-width: 150px;
+        --apple-pay-button-height: 30px;
+        --apple-pay-button-border-radius: 3px;
+        --apple-pay-button-padding: 0px 0px;
+        --apple-pay-button-box-sizing: border-box;
+      }
+    </style>
+</head>
+<body>
+  <apple-pay-button id="test-apple-pay" buttonstyle="black" type="plain" locale="en-US" onClick="onApplePayButtonClicked()"></apple-pay-button>
+  <div id="response-container" style="background-color: antiquewhite; border: 1px solid #f2f2f2; margin: 16px"></div>
+</body>
+</html>
