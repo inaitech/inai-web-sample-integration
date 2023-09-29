@@ -7,6 +7,9 @@
 // 5. Within `session.onvalidatemerchant`, call inai's execute interface and `validateMerchant` as action
 // 6. Once user authorizes payment, invoke makePayment with apple pay response object
 
+const token = "<token>"
+const serverUrl = "http://localhost:5999";
+
 const updateResponse = (status, response) => {
   const responseContainer = document.getElementById('response-container')
   responseContainer.innerHTML = `

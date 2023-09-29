@@ -5,7 +5,7 @@
 // 3. Launch Google Pay when user clicks on Google Pay button
 // 4. Invoke makePayment with google pay response object
 
-const token = "sbx_ci_4ebCLc4QV9aaTQiZmu7Zf3c8osCGuXZVuCBCviU21Wo5"
+const token = "<token>";
 const serverUrl = "http://localhost:5999";
 
 const updateResponse = (status, response) => {
