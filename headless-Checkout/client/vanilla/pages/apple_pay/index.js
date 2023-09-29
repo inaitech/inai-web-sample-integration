@@ -12,7 +12,7 @@ const updateResponse = (status, response) => {
   responseContainer.innerHTML = `
     <div style="padding: 16px">
     <div>Response Status: ${status}</div>
-    <div>Response: ${JSON.stringify(response)}</div>
+    <pre>Response: ${JSON.stringify(response)}</pre>
     </div>
   `
 };
