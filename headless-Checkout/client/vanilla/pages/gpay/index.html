@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <script src="https://pay.google.com/gp/p/js/pay.js"></script>
+    <script src="https://assets.inai.io/checkout/v1/inai.js"></script>
+  </head>
+  <style>
+    .page-cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    #response-container {
+      width: 75%;
+      background-color: antiquewhite;
+      margin: 16px;
+      word-wrap: break-word;
+    }
+  </style>
+  <body>
+    <div class="page-cover">
+      <div id="button-container"></div>
+      <div id="response-container"></div>
+    </div>
+    <script src="./index.js"></script>
+  </body>
+</html>
