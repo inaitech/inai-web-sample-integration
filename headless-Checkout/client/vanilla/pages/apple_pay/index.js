@@ -104,3 +104,5 @@ const processApplePayCheckout = () => {
       .catch((err) => console.error(err));
   })
 };
+
+processApplePayCheckout();
