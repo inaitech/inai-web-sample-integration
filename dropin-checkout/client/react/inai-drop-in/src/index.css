@@ -1,0 +1,119 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 20;
+  box-sizing: border-box;
+}
+
+.dropin {
+  width: 320px;
+  height: 30px;
+  font-weight: 500;
+  background-color: black;
+  color: white;
+  text-align: center;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 45vh auto;
+
+}
+
+.inai {
+  height: 100px;
+  padding-left: 15%;
+  margin-top: 20px;
+}
+
+.tshirt {
+  height: 300px;
+  margin-top: 50px;
+}
+
+#btn {
+  height: 50px;
+  width: 200px;
+  font-size: 20px;
+  margin-left: 25%;
+  margin-top: 10%;
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.imgcontainer {
+  padding-left: 15%;
+}
+
+#container {
+  margin: auto;
+  width: 500px;
+}
+
+.inai-widget-container {
+  width: 340px;
+  margin: auto;
+}
+
+.icon-container {
+  width:fit-content;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.icon-cover {
+  color:white;
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
+.success-icon-cover {
+  background-color: #2DCE89;
+  border:10px solid #24A46D;
+}
+
+.failure-icon-cover {
+  background-color: #F75676;
+  border:10px solid #EC0C38;
+}
+
+.payent-success-text,
+.payment-failure-text {
+  width:fit-content;
+  margin: auto;
+  font-weight: 700;
+  font-size: 26px;
+  margin-top: 4vh;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center
+}
+
+.transaction-details {
+  width:fit-content;
+  margin: 0px auto 40px;
+  font-weight: 400;
+  font-size: 20px;
+  margin-top: 4vh;
+  color: grey;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+
+.order-greeting {
+  width: fit-content;
+  margin: auto;
+  font-weight: 400;
+  font-size: 16px;
+  margin-top: 4vh;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
